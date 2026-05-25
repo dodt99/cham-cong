@@ -1,12 +1,4 @@
-export const DAY_KEYS = [
-  "mon",
-  "tue",
-  "wed",
-  "thu",
-  "fri",
-  "sat",
-  "sun",
-] as const;
+export const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri"] as const;
 
 export type DayKey = (typeof DAY_KEYS)[number];
 
@@ -16,8 +8,6 @@ export const DAY_LABELS: Record<DayKey, string> = {
   wed: "T4",
   thu: "T5",
   fri: "T6",
-  sat: "T7",
-  sun: "CN",
 };
 
 export type DayEntry = {
@@ -53,8 +43,6 @@ export function createEmptyEmployeeRow(): EmployeeWeekRow {
       wed: createEmptyDayEntry(),
       thu: createEmptyDayEntry(),
       fri: createEmptyDayEntry(),
-      sat: createEmptyDayEntry(),
-      sun: createEmptyDayEntry(),
     },
   };
 }

@@ -1,4 +1,4 @@
-import { DAY_KEYS, type DayKey } from "@/lib/types/attendance";
+import { DAY_KEYS, DAY_LABELS, type DayKey } from "@/lib/types/attendance";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -41,11 +41,11 @@ export function formatDayShort(isoDate: string): string {
 }
 
 export function formatWeekRange(weekStart: string): string {
-  const end = addDays(weekStart, 6);
+  const end = addDays(weekStart, 4);
   const startLabel = formatDayShort(weekStart);
   const endLabel = formatDayShort(end);
   const year = parseDate(end).getFullYear();
-  return `T2 ${startLabel} – CN ${endLabel}/${year}`;
+  return `T2 ${startLabel} – T6 ${endLabel}/${year}`;
 }
 
 export function getDayDate(weekStart: string, day: DayKey): string {
@@ -54,8 +54,7 @@ export function getDayDate(weekStart: string, day: DayKey): string {
 }
 
 export function formatDayHeader(weekStart: string, day: DayKey): string {
-  const label = { mon: "T2", tue: "T3", wed: "T4", thu: "T5", fri: "T6", sat: "T7", sun: "CN" }[day];
-  return `${label} ${formatDayShort(getDayDate(weekStart, day))}`;
+  return `${DAY_LABELS[day]} ${formatDayShort(getDayDate(weekStart, day))}`;
 }
 
 export function buildWeekOptions(
