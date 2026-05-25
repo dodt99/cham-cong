@@ -82,28 +82,22 @@ export function AttendanceTable({
                     value={row.defaultShiftCode}
                     onChange={(code) => onDefaultShift(employee.id, code)}
                     placeholder="Ca mặc định"
-                    className="w-[220px]"
+                    className="w-[150px]"
                   />
                 </TableCell>
                 {DAY_KEYS.map((day) => {
                   const dayEntry = row.days[day];
-                  const note = getShiftNote(dayEntry.shiftCode);
 
                   return (
                     <TableCell key={day} className="align-top">
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-row gap-2 px-5">
                         <ShiftSelect
                           value={dayEntry.shiftCode}
                           onChange={(code) =>
                             onDayShift(employee.id, day, code)
                           }
-                          className="w-full min-w-[200px]"
+                          className="w-full min-w-[150px]"
                         />
-                        {note && (
-                          <p className="text-xs text-muted-foreground" title={note}>
-                            {note}
-                          </p>
-                        )}
                         <div className="flex items-center gap-2">
                           <Checkbox
                             id={`${employee.id}-${day}-evening`}
@@ -118,9 +112,9 @@ export function AttendanceTable({
                           />
                           <Label
                             htmlFor={`${employee.id}-${day}-evening`}
-                            className="cursor-pointer text-xs font-normal"
+                            className="cursor-pointer text-xs font-normal whitespace-nowrap"
                           >
-                            Làm thêm buổi tối
+                            Tối
                           </Label>
                         </div>
                       </div>
