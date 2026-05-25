@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { EMPLOYEES } from "@/lib/constants/employees";
-import { SHIFTS } from "@/lib/constants/shifts";
+import { getShiftByCode } from "@/lib/constants/shifts";
 import {
   DAY_KEYS,
   type DayKey,
@@ -33,7 +33,8 @@ type AttendanceTableProps = {
 
 function getShiftNote(code: string | null): string | undefined {
   if (!code) return undefined;
-  return SHIFTS.find((s) => s.code === code)?.note;
+  const shift = getShiftByCode(code);
+  return shift ? shift.note : undefined;
 }
 
 export function AttendanceTable({
@@ -81,6 +82,7 @@ export function AttendanceTable({
                     value={row.defaultShiftCode}
                     onChange={(code) => onDefaultShift(employee.id, code)}
                     placeholder="Ca mặc định"
+                    className="w-[220px]"
                   />
                 </TableCell>
                 {DAY_KEYS.map((day) => {
@@ -95,7 +97,7 @@ export function AttendanceTable({
                           onChange={(code) =>
                             onDayShift(employee.id, day, code)
                           }
-                          className="w-full min-w-[130px]"
+                          className="w-full min-w-[200px]"
                         />
                         {note && (
                           <p className="text-xs text-muted-foreground" title={note}>
