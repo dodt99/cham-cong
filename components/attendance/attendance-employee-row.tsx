@@ -34,6 +34,7 @@ function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) 
       </TableCell>
       <TableCell>
         <ShiftSelect
+          variant="default"
           value={row.defaultShiftCode}
           onChange={(code) => setDefaultShift(employeeId, code)}
           placeholder="Ca mặc định"
@@ -54,6 +55,7 @@ function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) 
               }
             >
               <ShiftSelect
+                variant={isWeekend ? "weekend" : "weekday"}
                 value={dayEntry.shiftCode}
                 onChange={(code) => setDayShift(employeeId, day, code)}
                 className="w-full min-w-[150px]"

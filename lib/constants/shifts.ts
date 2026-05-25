@@ -54,6 +54,21 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
 /** Flat list for lookup by code */
 export const SHIFTS: Shift[] = SHIFT_GROUPS.flatMap((g) => g.shifts);
 
+export type ShiftSelectVariant = "default" | "weekday" | "weekend";
+
+const VARIANT_GROUP_LABELS: Record<ShiftSelectVariant, string[]> = {
+  default: ["Ca thường"],
+  weekday: ["Ca thường", "Nghỉ nửa ngày"],
+  weekend: ["Ca thứ 7 - CN"],
+};
+
+export function getShiftGroupsForVariant(
+  variant: ShiftSelectVariant,
+): ShiftGroup[] {
+  const labels = VARIANT_GROUP_LABELS[variant];
+  return SHIFT_GROUPS.filter((g) => labels.includes(g.label));
+}
+
 export const EMPTY_SHIFT_VALUE = "__empty__";
 
 export function getShiftByCode(code: string): Shift | undefined {

@@ -2,7 +2,8 @@
 
 import {
   EMPTY_SHIFT_VALUE,
-  SHIFT_GROUPS,
+  getShiftGroupsForVariant,
+  type ShiftSelectVariant,
 } from "@/lib/constants/shifts";
 import {
   Select,
@@ -17,6 +18,7 @@ import {
 type ShiftSelectProps = {
   value: string | null;
   onChange: (code: string | null) => void;
+  variant: ShiftSelectVariant;
   placeholder?: string;
   className?: string;
 };
@@ -24,10 +26,12 @@ type ShiftSelectProps = {
 export function ShiftSelect({
   value,
   onChange,
+  variant,
   placeholder = "Chọn ca",
   className,
 }: ShiftSelectProps) {
   const selectValue = value ?? EMPTY_SHIFT_VALUE;
+  const shiftGroups = getShiftGroupsForVariant(variant);
 
   return (
     <Select
@@ -43,7 +47,7 @@ export function ShiftSelect({
         <SelectItem value={EMPTY_SHIFT_VALUE}>
           <span className="text-muted-foreground">— Nghỉ —</span>
         </SelectItem>
-        {SHIFT_GROUPS.map((group) => (
+        {shiftGroups.map((group) => (
           <SelectGroup key={group.label}>
             <SelectLabel>{group.label}</SelectLabel>
             {group.shifts.map((shift) => (
