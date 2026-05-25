@@ -42,30 +42,39 @@ function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) 
       </TableCell>
       {DAY_KEYS.map((day) => {
         const dayEntry = row.days[day];
+        const isWeekend = day === "sat" || day === "sun";
 
         return (
           <TableCell key={day} className="align-top">
-            <div className="flex flex-row gap-2 px-5">
+            <div
+              className={
+                isWeekend
+                  ? "px-5"
+                  : "flex flex-row gap-2 px-5"
+              }
+            >
               <ShiftSelect
                 value={dayEntry.shiftCode}
                 onChange={(code) => setDayShift(employeeId, day, code)}
                 className="w-full min-w-[150px]"
               />
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id={`${employeeId}-${day}-evening`}
-                  checked={dayEntry.extraEvening}
-                  onCheckedChange={(checked) =>
-                    setExtraEvening(employeeId, day, checked === true)
-                  }
-                />
-                <Label
-                  htmlFor={`${employeeId}-${day}-evening`}
-                  className="cursor-pointer text-xs font-normal whitespace-nowrap"
-                >
-                  Tối
-                </Label>
-              </div>
+              {!isWeekend && (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`${employeeId}-${day}-evening`}
+                    checked={dayEntry.extraEvening}
+                    onCheckedChange={(checked) =>
+                      setExtraEvening(employeeId, day, checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor={`${employeeId}-${day}-evening`}
+                    className="cursor-pointer text-xs font-normal whitespace-nowrap"
+                  >
+                    Tối
+                  </Label>
+                </div>
+              )}
             </div>
           </TableCell>
         );

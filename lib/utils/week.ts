@@ -41,11 +41,11 @@ export function formatDayShort(isoDate: string): string {
 }
 
 export function formatWeekRange(weekStart: string): string {
-  const end = addDays(weekStart, 4);
+  const end = addDays(weekStart, 6);
   const startLabel = formatDayShort(weekStart);
   const endLabel = formatDayShort(end);
   const year = parseDate(end).getFullYear();
-  return `T2 ${startLabel} – T6 ${endLabel}/${year}`;
+  return `T2 ${startLabel} – CN ${endLabel}/${year}`;
 }
 
 export function getDayDate(weekStart: string, day: DayKey): string {

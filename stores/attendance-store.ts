@@ -95,7 +95,7 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
           defaultShiftCode: code,
           days: { ...rows[employeeId].days },
         };
-        for (const day of DAY_KEYS) {
+        for (const day of DAY_KEYS.slice(0, 5)) {
           row.days[day] = { ...row.days[day], shiftCode: code };
         }
         rows[employeeId] = row;

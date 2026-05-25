@@ -38,6 +38,9 @@ const KIND_SORT_ORDER: Record<SegmentKind, number> = {
   evening: 2,
 };
 
+/** T2–T6: merge consecutive days; T7/CN: one export row per day */
+const WEEKDAY_SLICE_COUNT = 5;
+
 function buildDaySlices(weekStart: string, row: EmployeeWeekRow): DaySlice[] {
   return DAY_KEYS.map((day) => ({
     date: getDayDate(weekStart, day),
@@ -128,6 +131,39 @@ function buildEveningSegments(days: DaySlice[]): Segment[] {
   );
 }
 
+function buildWeekendSegments(days: DaySlice[]): Segment[] {
+  const segments: Segment[] = [];
+
+  for (const day of days) {
+    if (day.shiftCode !== null) {
+      segments.push({
+        fromDate: day.date,
+        toDate: day.date,
+        shiftLabel: day.shiftCode,
+        kind: "work",
+      });
+    } else {
+      segments.push({
+        fromDate: day.date,
+        toDate: day.date,
+        shiftLabel: OFF_LABEL,
+        kind: "off",
+      });
+    }
+
+    if (day.extraEvening) {
+      segments.push({
+        fromDate: day.date,
+        toDate: day.date,
+        shiftLabel: EVENING_SHIFT_CODE,
+        kind: "evening",
+      });
+    }
+  }
+
+  return segments;
+}
+
 function sortSegments(segments: Segment[]): Segment[] {
   return [...segments].sort((a, b) => {
     if (a.fromDate !== b.fromDate) {
@@ -142,10 +178,14 @@ function buildEmployeeSegments(
   row: EmployeeWeekRow,
 ): Segment[] {
   const days = buildDaySlices(weekStart, row);
+  const weekdays = days.slice(0, WEEKDAY_SLICE_COUNT);
+  const weekend = days.slice(WEEKDAY_SLICE_COUNT);
+
   const segments = [
-    ...buildWorkSegments(days),
-    ...buildOffSegments(days),
-    ...buildEveningSegments(days),
+    ...buildWorkSegments(weekdays),
+    ...buildOffSegments(weekdays),
+    ...buildEveningSegments(weekdays),
+    ...buildWeekendSegments(weekend),
   ];
   return sortSegments(segments);
 }

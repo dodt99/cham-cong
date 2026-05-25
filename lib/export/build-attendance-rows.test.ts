@@ -14,6 +14,10 @@ import {
 
 const WEEK_START = "2026-05-18";
 
+/** Default weekend when tests only set T2–T6 (one row per day) */
+const SAT_OFF = { from: "2026-05-23", to: "2026-05-23", shift: OFF_LABEL };
+const SUN_OFF = { from: "2026-05-24", to: "2026-05-24", shift: OFF_LABEL };
+
 function makeRow(
   days: Partial<
     Record<DayKey, { shiftCode: string | null; extraEvening?: boolean }>
@@ -55,6 +59,8 @@ describe("buildEmployeeSegments", () => {
 
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-22", shift: "K07" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -70,6 +76,8 @@ describe("buildEmployeeSegments", () => {
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-18", shift: OFF_LABEL },
       { from: "2026-05-19", to: "2026-05-22", shift: "K07" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -86,6 +94,8 @@ describe("buildEmployeeSegments", () => {
       { from: "2026-05-18", to: "2026-05-18", shift: "K07" },
       { from: "2026-05-19", to: "2026-05-20", shift: OFF_LABEL },
       { from: "2026-05-21", to: "2026-05-22", shift: "K07" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -101,6 +111,8 @@ describe("buildEmployeeSegments", () => {
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-20", shift: "K07" },
       { from: "2026-05-21", to: "2026-05-22", shift: "K02" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -116,6 +128,8 @@ describe("buildEmployeeSegments", () => {
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-22", shift: "K07" },
       { from: "2026-05-21", to: "2026-05-22", shift: EVENING_SHIFT_CODE },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -132,13 +146,30 @@ describe("buildEmployeeSegments", () => {
       { from: "2026-05-18", to: "2026-05-18", shift: OFF_LABEL },
       { from: "2026-05-18", to: "2026-05-18", shift: EVENING_SHIFT_CODE },
       { from: "2026-05-19", to: "2026-05-22", shift: "K07" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
-  it("treats full week off as one row", () => {
+  it("treats full week off as merged weekdays and separate weekend rows", () => {
     const row = createEmptyEmployeeRow();
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-22", shift: OFF_LABEL },
+      SAT_OFF,
+      SUN_OFF,
+    ]);
+  });
+
+  it("does not merge weekend days with same shift", () => {
+    const row = makeRow({
+      sat: { shiftCode: "K01" },
+      sun: { shiftCode: "K01" },
+    });
+
+    expect(segmentLabels(row)).toEqual([
+      { from: "2026-05-18", to: "2026-05-22", shift: OFF_LABEL },
+      { from: "2026-05-23", to: "2026-05-23", shift: "K01" },
+      { from: "2026-05-24", to: "2026-05-24", shift: "K01" },
     ]);
   });
 
@@ -153,6 +184,8 @@ describe("buildEmployeeSegments", () => {
 
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-22", shift: "K35" },
+      SAT_OFF,
+      SUN_OFF,
     ]);
   });
 
@@ -181,6 +214,8 @@ describe("buildEmployeeSegments", () => {
       to: "2026-05-22",
       shift: "K02",
     });
+    expect(labels[3]).toEqual(SAT_OFF);
+    expect(labels[4]).toEqual(SUN_OFF);
   });
 });
 
@@ -194,9 +229,18 @@ describe("buildAttendanceRows", () => {
     const rows = buildAttendanceRows(sheet);
     const offRows = rows.filter((r) => r.shiftLabel === OFF_LABEL);
     expect(offRows.length).toBeGreaterThan(0);
+    const weekdayOff = offRows.filter(
+      (r) => r.fromDate === "2026-05-18" && r.toDate === "2026-05-22",
+    );
+    expect(weekdayOff.length).toBeGreaterThan(0);
     expect(
-      offRows.every(
-        (r) => r.fromDate === "2026-05-18" && r.toDate === "2026-05-22",
+      offRows.some(
+        (r) => r.fromDate === "2026-05-23" && r.toDate === "2026-05-23",
+      ),
+    ).toBe(true);
+    expect(
+      offRows.some(
+        (r) => r.fromDate === "2026-05-24" && r.toDate === "2026-05-24",
       ),
     ).toBe(true);
   });
