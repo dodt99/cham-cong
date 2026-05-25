@@ -2,6 +2,7 @@
 
 import { AttendanceTable } from "@/components/attendance/attendance-table";
 import { CreateWeekDialog } from "@/components/attendance/create-week-dialog";
+import { ExportExcelButton } from "@/components/attendance/export-excel-button";
 import { WeekTabs } from "@/components/attendance/week-tabs";
 import { useAttendanceStore } from "@/hooks/use-attendance-store";
 import { formatWeekRange } from "@/lib/utils/week";
@@ -41,10 +42,13 @@ export function AttendancePage() {
             </p>
           )}
         </div>
-        <CreateWeekDialog
-          onCreateWeek={createWeek}
-          existingWeeks={weekStarts}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <ExportExcelButton sheet={activeSheet} />
+          <CreateWeekDialog
+            onCreateWeek={createWeek}
+            existingWeeks={weekStarts}
+          />
+        </div>
       </header>
 
       <WeekTabs
