@@ -3,18 +3,20 @@
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  selectActiveSheet,
+  selectHasActiveSheet,
+} from "@/lib/attendance/selectors";
 import { buildAttendanceRows } from "@/lib/export/build-attendance-rows";
 import { fillAndDownloadAttendanceExcel } from "@/lib/export/fill-attendance-workbook";
-import type { WeekSheet } from "@/lib/types/attendance";
+import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
-type ExportExcelButtonProps = {
-  sheet: WeekSheet | null;
-};
-
-export function ExportExcelButton({ sheet }: ExportExcelButtonProps) {
+export function ExportExcelButton() {
   const [exporting, setExporting] = useState(false);
+  const canExport = useAttendanceZustandStore(selectHasActiveSheet);
 
   async function handleExport() {
+    const sheet = selectActiveSheet(useAttendanceZustandStore.getState());
     if (!sheet) return;
 
     setExporting(true);
@@ -33,7 +35,7 @@ export function ExportExcelButton({ sheet }: ExportExcelButtonProps) {
     <Button
       type="button"
       variant="outline"
-      disabled={!sheet || exporting}
+      disabled={!canExport || exporting}
       onClick={handleExport}
     >
       <Download className="size-4" />
