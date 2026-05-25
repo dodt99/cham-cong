@@ -1,8 +1,26 @@
 import {
   type AttendanceExportRow,
 } from "@/lib/export/build-attendance-rows";
-import { DATA_START_ROW, TEMPLATE_PATH } from "@/lib/export/constants";
-import { formatDateForExport } from "@/lib/export/format";
+import {
+  DATA_START_ROW,
+  TEMPLATE_PATH,
+  WEEKEND_DATE_FILL_ARGB,
+} from "@/lib/export/constants";
+import {
+  formatDateForExport,
+  isWeekendExportRow,
+} from "@/lib/export/format";
+import type { Cell, Fill } from "exceljs";
+
+const WEEKEND_DATE_FILL: Fill = {
+  type: "pattern",
+  pattern: "solid",
+  fgColor: { argb: WEEKEND_DATE_FILL_ARGB },
+};
+
+function applyWeekendDateCellFill(cell: Cell): void {
+  cell.style = { ...cell.style, fill: WEEKEND_DATE_FILL };
+}
 
 export async function fillAndDownloadAttendanceExcel(
   exportRows: AttendanceExportRow[],
@@ -32,6 +50,12 @@ export async function fillAndDownloadAttendanceExcel(
     excelRow.getCell(3).value = formatDateForExport(row.fromDate);
     excelRow.getCell(4).value = formatDateForExport(row.toDate);
     excelRow.getCell(5).value = row.shiftLabel;
+
+    if (isWeekendExportRow(row.fromDate, row.toDate)) {
+      applyWeekendDateCellFill(excelRow.getCell(3));
+      applyWeekendDateCellFill(excelRow.getCell(4));
+    }
+
     excelRow.commit();
     rowNum += 1;
   }
