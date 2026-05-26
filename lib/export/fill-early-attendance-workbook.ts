@@ -5,12 +5,12 @@ import {
   EARLY_TEMPLATE_PATH,
 } from "@/lib/export/early-constants";
 import { formatEarlyWeekHeader } from "@/lib/export/format-early-week-header";
-import { toExcelTimeValue } from "@/lib/export/format";
-
-function parseDate(isoDate: string): Date {
-  const [y, m, d] = isoDate.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
+import {
+  EXCEL_DATE_NUM_FMT,
+  EXCEL_TIME_NUM_FMT,
+  toExcelDateValue,
+  toExcelTimeValue,
+} from "@/lib/export/format";
 
 function updateEarlyWeekHeader(
   sheet: import("exceljs").Worksheet,
@@ -48,14 +48,22 @@ export async function fillAndDownloadEarlyAttendanceExcel(
     const excelRow = sheet.getRow(rowNum);
     excelRow.getCell(2).value = row.employeeId;
     excelRow.getCell(3).value = row.fullName;
-    excelRow.getCell(4).value = parseDate(row.workDate);
+    const workDateCell = excelRow.getCell(4);
+    workDateCell.value = toExcelDateValue(row.workDate);
+    workDateCell.numFmt = EXCEL_DATE_NUM_FMT;
 
     if (row.assignedStart) {
-      excelRow.getCell(8).value = toExcelTimeValue(row.assignedStart);
+      const startCell = excelRow.getCell(8);
+      startCell.value = toExcelTimeValue(row.assignedStart);
+      startCell.numFmt = EXCEL_TIME_NUM_FMT;
     }
-    excelRow.getCell(9).value = row.assignedEnd
+    const endCell = excelRow.getCell(9);
+    endCell.value = row.assignedEnd
       ? toExcelTimeValue(row.assignedEnd)
       : null;
+    if (row.assignedEnd) {
+      endCell.numFmt = EXCEL_TIME_NUM_FMT;
+    }
 
     excelRow.getCell(12).value = row.jobTitle;
 

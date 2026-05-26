@@ -12,6 +12,14 @@ export function isWeekendExportRow(fromDate: string, toDate: string): boolean {
   return dow === 0 || dow === 6;
 }
 
+/** Excel date cell (UTC midnight) — pair with numFmt `dd/mm/yyyy`. */
+export function toExcelDateValue(isoDate: string): Date {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
+export const EXCEL_DATE_NUM_FMT = "dd/mm/yyyy";
+
 /** Excel export date format: dd/MM/yyyy */
 export function formatDateForExport(isoDate: string): string {
   const d = parseDate(isoDate);
@@ -25,7 +33,9 @@ export function formatTimeHHmm(parts: ShiftTime): string {
   return `${String(parts.h).padStart(2, "0")}:${String(parts.m).padStart(2, "0")}`;
 }
 
-/** Excel time-only cell (1899-12-30 base date). */
-export function toExcelTimeValue(parts: ShiftTime): Date {
-  return new Date(1899, 11, 30, parts.h, parts.m, 0, 0);
+export const EXCEL_TIME_NUM_FMT = "hh:mm";
+
+/** Excel time as day-fraction serial (avoids local timezone skew on 1899 dates). */
+export function toExcelTimeValue(parts: ShiftTime): number {
+  return (parts.h * 60 + parts.m) / (24 * 60);
 }

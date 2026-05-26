@@ -39,9 +39,9 @@ export function EarlyAttendanceTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[100px]">Ngày làm việc</TableHead>
               <TableHead className="min-w-[80px]">Mã NV</TableHead>
               <TableHead className="min-w-[160px]">Họ và tên</TableHead>
+              <TableHead className="min-w-[100px]">Ngày làm việc</TableHead>
               <TableHead className="min-w-[140px]">
                 Bắt đầu ca
               </TableHead>
@@ -73,12 +73,12 @@ export function EarlyAttendanceTable() {
                   key={`${row.employeeId}-${row.workDate}`}
                 >
                   <TableCell className="font-mono text-xs">
-                    {formatDateForExport(row.workDate)}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
                     {row.employeeId}
                   </TableCell>
                   <TableCell>{row.fullName}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {formatDateForExport(row.workDate)}
+                  </TableCell>
                   <TableCell className="font-mono text-xs">
                     {formatTime(row.assignedStart)}
                   </TableCell>
