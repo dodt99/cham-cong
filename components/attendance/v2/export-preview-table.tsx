@@ -24,8 +24,7 @@ export function ExportPreviewTable() {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm text-muted-foreground">
-        Đây là dữ liệu sẽ ghi vào Excel khi bấm Xuất file (đã gộp ca liên
-        tiếp).
+        Đây là dữ liệu sẽ ghi vào Excel khi bấm Xuất file.
       </p>
       <div className="rounded-md border">
         <Table>
@@ -56,7 +55,7 @@ export function ExportPreviewTable() {
                   className={cn(
                     row.shiftLabel === OFF_LABEL && "bg-muted/40",
                     row.shiftLabel === EVENING_SHIFT_CODE &&
-                      "bg-amber-50/80 dark:bg-amber-950/30",
+                    "bg-amber-50/80 dark:bg-amber-950/30",
                   )}
                 >
                   <TableCell className="font-mono text-xs">
