@@ -1,4 +1,5 @@
 import { EMPLOYEES } from "@/lib/constants/employees";
+import { getWorkLocationCode } from "@/lib/constants/work-locations";
 import { EVENING_SHIFT_CODE, OFF_LABEL } from "@/lib/export/constants";
 import {
   createEmptyEmployeeRow,
@@ -15,12 +16,15 @@ export type AttendanceExportRow = {
   fromDate: string;
   toDate: string;
   shiftLabel: string;
+  locationCode: string | null;
 };
 
 type DaySlice = {
   date: string;
   shiftCode: string | null;
+  locationKey: string | null;
   extraEvening: boolean;
+  eveningLocationKey: string | null;
 };
 
 type SegmentKind = "work" | "off" | "evening";
@@ -29,6 +33,7 @@ type Segment = {
   fromDate: string;
   toDate: string;
   shiftLabel: string;
+  locationCode: string | null;
   kind: SegmentKind;
 };
 
@@ -45,15 +50,17 @@ function buildDaySlices(weekStart: string, row: EmployeeWeekRow): DaySlice[] {
   return DAY_KEYS.map((day) => ({
     date: getDayDate(weekStart, day),
     shiftCode: row.days[day].shiftCode,
+    locationKey: row.days[day].locationKey,
     extraEvening: row.days[day].extraEvening,
+    eveningLocationKey: row.days[day].eveningLocationKey,
   }));
 }
 
 function buildConsecutiveSegments(
   days: DaySlice[],
   isActive: (day: DaySlice) => boolean,
-  getLabel: (day: DaySlice) => string,
-  canMerge: (prevLabel: string, nextLabel: string) => boolean,
+  createSegment: (day: DaySlice) => Pick<Segment, "shiftLabel" | "locationCode">,
+  canMergeWithDay: (current: Segment, day: DaySlice) => boolean,
   kind: SegmentKind,
 ): Segment[] {
   const segments: Segment[] = [];
@@ -65,11 +72,11 @@ function buildConsecutiveSegments(
       continue;
     }
 
-    const label = getLabel(day);
+    const { shiftLabel, locationCode } = createSegment(day);
 
     if (
       current &&
-      canMerge(current.shiftLabel, label) &&
+      canMergeWithDay(current, day) &&
       isAdjacentDay(current.toDate, day.date)
     ) {
       current.toDate = day.date;
@@ -79,7 +86,8 @@ function buildConsecutiveSegments(
     current = {
       fromDate: day.date,
       toDate: day.date,
-      shiftLabel: label,
+      shiftLabel,
+      locationCode,
       kind,
     };
     segments.push(current);
@@ -105,8 +113,13 @@ function buildWorkSegments(days: DaySlice[]): Segment[] {
   return buildConsecutiveSegments(
     days,
     (day) => day.shiftCode !== null,
-    (day) => day.shiftCode!,
-    (prev, next) => prev === next,
+    (day) => ({
+      shiftLabel: day.shiftCode!,
+      locationCode: getWorkLocationCode(day.locationKey),
+    }),
+    (current, day) =>
+      current.shiftLabel === day.shiftCode &&
+      current.locationCode === getWorkLocationCode(day.locationKey),
     "work",
   );
 }
@@ -115,7 +128,7 @@ function buildOffSegments(days: DaySlice[]): Segment[] {
   return buildConsecutiveSegments(
     days,
     (day) => day.shiftCode === null,
-    () => OFF_LABEL,
+    () => ({ shiftLabel: OFF_LABEL, locationCode: null }),
     () => true,
     "off",
   );
@@ -125,8 +138,12 @@ function buildEveningSegments(days: DaySlice[]): Segment[] {
   return buildConsecutiveSegments(
     days,
     (day) => day.extraEvening,
-    () => EVENING_SHIFT_CODE,
-    () => true,
+    (day) => ({
+      shiftLabel: EVENING_SHIFT_CODE,
+      locationCode: getWorkLocationCode(day.eveningLocationKey),
+    }),
+    (current, day) =>
+      current.locationCode === getWorkLocationCode(day.eveningLocationKey),
     "evening",
   );
 }
@@ -140,6 +157,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         fromDate: day.date,
         toDate: day.date,
         shiftLabel: day.shiftCode,
+        locationCode: getWorkLocationCode(day.locationKey),
         kind: "work",
       });
     } else {
@@ -147,6 +165,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         fromDate: day.date,
         toDate: day.date,
         shiftLabel: OFF_LABEL,
+        locationCode: null,
         kind: "off",
       });
     }
@@ -156,6 +175,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         fromDate: day.date,
         toDate: day.date,
         shiftLabel: EVENING_SHIFT_CODE,
+        locationCode: getWorkLocationCode(day.eveningLocationKey),
         kind: "evening",
       });
     }
@@ -204,6 +224,7 @@ export function buildAttendanceRows(sheet: WeekSheet): AttendanceExportRow[] {
         fromDate: segment.fromDate,
         toDate: segment.toDate,
         shiftLabel: segment.shiftLabel,
+        locationCode: segment.locationCode,
       });
     }
   }
@@ -223,7 +244,15 @@ export function buildEmployeeSegmentsForTest(
 export function buildDaySlicesForTest(
   weekStart: string,
   days: Partial<
-    Record<DayKey, { shiftCode: string | null; extraEvening: boolean }>
+    Record<
+      DayKey,
+      {
+        shiftCode: string | null;
+        locationKey?: string | null;
+        extraEvening?: boolean;
+        eveningLocationKey?: string | null;
+      }
+    >
   >,
 ): DaySlice[] {
   const row = createEmptyEmployeeRow();

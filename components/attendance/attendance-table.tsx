@@ -30,9 +30,9 @@ export function AttendanceTable() {
             <TableHead className="sticky left-[90px] z-20 min-w-[160px] bg-background shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
               Họ và tên
             </TableHead>
-            <TableHead className="min-w-[150px]">Ca mặc định</TableHead>
+            <TableHead className="min-w-[200px]">Ca / Địa điểm</TableHead>
             {DAY_KEYS.map((day) => (
-              <TableHead key={day} className="min-w-[180px] text-center">
+              <TableHead key={day} className="min-w-[220px] text-center">
                 {formatDayHeader(weekStart, day)}
               </TableHead>
             ))}

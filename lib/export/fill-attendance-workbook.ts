@@ -57,6 +57,10 @@ export async function fillAndDownloadAttendanceExcel(
       excelRow.getCell(7).value = EXPORT_JOB_CODE;
     }
 
+    if (row.locationCode) {
+      excelRow.getCell(9).value = row.locationCode;
+    }
+
     if (isWeekendExportRow(row.fromDate, row.toDate)) {
       applyWeekendDateCellFill(excelRow.getCell(3));
       applyWeekendDateCellFill(excelRow.getCell(4));

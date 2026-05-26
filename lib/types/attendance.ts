@@ -22,11 +22,14 @@ export const DAY_LABELS: Record<DayKey, string> = {
 
 export type DayEntry = {
   shiftCode: string | null;
+  locationKey: string | null;
   extraEvening: boolean;
+  eveningLocationKey: string | null;
 };
 
 export type EmployeeWeekRow = {
   defaultShiftCode: string | null;
+  defaultLocationKey: string | null;
   days: Record<DayKey, DayEntry>;
 };
 
@@ -41,12 +44,18 @@ export type AttendanceStore = {
 };
 
 export function createEmptyDayEntry(): DayEntry {
-  return { shiftCode: null, extraEvening: false };
+  return {
+    shiftCode: null,
+    locationKey: null,
+    extraEvening: false,
+    eveningLocationKey: null,
+  };
 }
 
 export function createEmptyEmployeeRow(): EmployeeWeekRow {
   return {
     defaultShiftCode: null,
+    defaultLocationKey: null,
     days: DAY_KEYS.reduce(
       (acc, day) => {
         acc[day] = createEmptyDayEntry();
