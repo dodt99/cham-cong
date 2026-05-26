@@ -1,6 +1,7 @@
 "use client";
 
 import { EarlyAttendanceTable } from "@/components/attendance/early-attendance-table";
+import { WeekendExportAttendanceTable } from "@/components/attendance/weekend-export-attendance-table";
 import { EveningTabContent } from "@/components/attendance/evening-tab-content";
 import { ExportPreviewTable } from "@/components/attendance/export-preview-table";
 import { WeekdayAttendanceTable } from "@/components/attendance/weekday-attendance-table";
@@ -28,10 +29,12 @@ export function AttendanceSectionTabs() {
     <Tabs defaultValue="weekday" className="w-full">
       <TabsList className="mb-4 h-auto flex-wrap">
         <TabsTrigger value="weekday">Ngày thường</TabsTrigger>
-        <TabsTrigger value="weekend">T7 – CN</TabsTrigger>
         <TabsTrigger value="evening">Tối</TabsTrigger>
-        <TabsTrigger value="summary">Tổng hợp</TabsTrigger>
-        <TabsTrigger value="early">Làm sớm</TabsTrigger>
+        <TabsTrigger value="weekend">T7-CN</TabsTrigger>
+        <TabsTrigger value="export-fast">Export Fast</TabsTrigger>
+        <TabsTrigger value="export-early">Export Sớm</TabsTrigger>
+        <TabsTrigger value="export-evening">Export Tối</TabsTrigger>
+        <TabsTrigger value="export-weekend">Export T7-CN</TabsTrigger>
       </TabsList>
 
       <TabsContent value="weekday" className="overflow-x-auto">
@@ -46,12 +49,16 @@ export function AttendanceSectionTabs() {
         <EveningTabContent />
       </TabsContent>
 
-      <TabsContent value="summary" className="overflow-x-auto">
+      <TabsContent value="export-fast" className="overflow-x-auto">
         <ExportPreviewTable />
       </TabsContent>
 
-      <TabsContent value="early" className="overflow-x-auto">
+      <TabsContent value="export-early" className="overflow-x-auto">
         <EarlyAttendanceTable />
+      </TabsContent>
+
+      <TabsContent value="export-weekend" className="overflow-x-auto">
+        <WeekendExportAttendanceTable />
       </TabsContent>
     </Tabs>
   );
