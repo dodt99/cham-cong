@@ -2,11 +2,19 @@
 
 import { ClearAttendanceDataButton } from "@/components/attendance/clear-attendance-data-button";
 import { CreateWeekDialog } from "@/components/attendance/create-week-dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   selectActiveWeekStart,
   selectWeekStarts,
 } from "@/lib/attendance/selectors";
-import { formatWeekRange } from "@/lib/utils/week";
+import { formatWeekRange, sortWeekStarts } from "@/lib/utils/week";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { useShallow } from "zustand/react/shallow";
 
@@ -14,18 +22,33 @@ export function AttendancePageHeader() {
   const activeWeekStart = useAttendanceZustandStore(selectActiveWeekStart);
   const weekStarts = useAttendanceZustandStore(useShallow(selectWeekStarts));
   const createWeek = useAttendanceZustandStore((s) => s.createWeek);
+  const setActiveWeek = useAttendanceZustandStore((s) => s.setActiveWeek);
+
+  const sortedWeekStarts = sortWeekStarts(weekStarts);
+  const selectedWeek = activeWeekStart ?? sortedWeekStarts[0] ?? null;
 
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Chấm công</h1>
-        {activeWeekStart && (
-          <p className="mt-1 text-sm text-muted-foreground">
-            Tuần đang xem:{" "}
-            <span className="font-semibold text-foreground">
-              {formatWeekRange(activeWeekStart)}
-            </span>
-          </p>
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3">
+        {/* <h1 className="text-2xl font-bold tracking-tight">Chấm công</h1> */}
+        {sortedWeekStarts.length > 0 && selectedWeek && (
+          <div className="flex items-center gap-2">
+            <Label htmlFor="week-select" className="text-xs text-muted-foreground">
+              Tuần
+            </Label>
+            <Select value={selectedWeek} onValueChange={setActiveWeek}>
+              <SelectTrigger id="week-select" className="w-full min-w-[220px]">
+                <SelectValue>{formatWeekRange(selectedWeek)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {sortedWeekStarts.map((weekStart) => (
+                  <SelectItem key={weekStart} value={weekStart}>
+                    {formatWeekRange(weekStart)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
