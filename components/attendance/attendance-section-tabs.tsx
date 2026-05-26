@@ -1,6 +1,7 @@
 "use client";
 
 import { EarlyAttendanceTable } from "@/components/attendance/early-attendance-table";
+import { EveningExportAttendanceTable } from "@/components/attendance/evening-export-attendance-table";
 import { WeekendExportAttendanceTable } from "@/components/attendance/weekend-export-attendance-table";
 import { EveningTabContent } from "@/components/attendance/evening-tab-content";
 import { ExportPreviewTable } from "@/components/attendance/export-preview-table";
@@ -55,6 +56,10 @@ export function AttendanceSectionTabs() {
 
       <TabsContent value="export-early" className="overflow-x-auto">
         <EarlyAttendanceTable />
+      </TabsContent>
+
+      <TabsContent value="export-evening" className="overflow-x-auto">
+        <EveningExportAttendanceTable />
       </TabsContent>
 
       <TabsContent value="export-weekend" className="overflow-x-auto">
