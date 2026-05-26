@@ -2,6 +2,7 @@ export type WorkLocation = {
   key: string;
   code: string;
   name: string;
+  block: string;
 };
 
 const WORK_LOCATION_ENTRIES: { name: string; code: string, block: string }[] = [
@@ -41,6 +42,7 @@ export const WORK_LOCATIONS: WorkLocation[] = WORK_LOCATION_ENTRIES.map(
     key: `${entry.code}#${index}`,
     code: entry.code,
     name: entry.name,
+    block: entry.block,
   }),
 );
 
@@ -63,4 +65,9 @@ export function getWorkLocationByKey(
 export function getWorkLocationCode(key: string | null): string | null {
   if (!key) return null;
   return getWorkLocationByKey(key)?.code ?? null;
+}
+
+export function getWorkLocationBlock(key: string | null): string | null {
+  if (!key) return null;
+  return getWorkLocationByKey(key)?.block ?? null;
 }

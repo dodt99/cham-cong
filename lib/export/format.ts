@@ -1,3 +1,5 @@
+import type { ShiftTime } from "@/lib/constants/shifts";
+
 function parseDate(isoDate: string): Date {
   const [y, m, d] = isoDate.split("-").map(Number);
   return new Date(y, m - 1, d);
@@ -17,4 +19,13 @@ export function formatDateForExport(isoDate: string): string {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const yyyy = d.getFullYear();
   return `${dd}/${mm}/${yyyy}`;
+}
+
+export function formatTimeHHmm(parts: ShiftTime): string {
+  return `${String(parts.h).padStart(2, "0")}:${String(parts.m).padStart(2, "0")}`;
+}
+
+/** Excel time-only cell (1899-12-30 base date). */
+export function toExcelTimeValue(parts: ShiftTime): Date {
+  return new Date(1899, 11, 30, parts.h, parts.m, 0, 0);
 }

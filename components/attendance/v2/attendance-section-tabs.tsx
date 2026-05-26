@@ -1,5 +1,6 @@
 "use client";
 
+import { EarlyAttendanceTable } from "@/components/attendance/v2/early-attendance-table";
 import { EveningTabContent } from "@/components/attendance/v2/evening-tab-content";
 import { ExportPreviewTable } from "@/components/attendance/v2/export-preview-table";
 import { WeekdayAttendanceTable } from "@/components/attendance/v2/weekday-attendance-table";
@@ -30,6 +31,7 @@ export function AttendanceSectionTabs() {
         <TabsTrigger value="weekend">T7 – CN</TabsTrigger>
         <TabsTrigger value="evening">Tối</TabsTrigger>
         <TabsTrigger value="summary">Tổng hợp</TabsTrigger>
+        <TabsTrigger value="early">Làm sớm</TabsTrigger>
       </TabsList>
 
       <TabsContent value="weekday" className="overflow-x-auto">
@@ -46,6 +48,10 @@ export function AttendanceSectionTabs() {
 
       <TabsContent value="summary" className="overflow-x-auto">
         <ExportPreviewTable />
+      </TabsContent>
+
+      <TabsContent value="early" className="overflow-x-auto">
+        <EarlyAttendanceTable />
       </TabsContent>
     </Tabs>
   );

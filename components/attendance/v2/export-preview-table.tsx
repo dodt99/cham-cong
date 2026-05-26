@@ -1,5 +1,6 @@
 "use client";
 
+import { ExportExcelButton } from "@/components/attendance/export-excel-button";
 import {
   Table,
   TableBody,
@@ -24,9 +25,12 @@ export function ExportPreviewTable() {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-sm text-muted-foreground">
-        Đây là dữ liệu sẽ ghi vào Excel khi bấm Xuất file.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">
+          Đây là dữ liệu sẽ ghi vào Excel khi bấm Xuất file.
+        </p>
+        <ExportExcelButton />
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

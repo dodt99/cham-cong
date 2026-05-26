@@ -1,7 +1,11 @@
+export type ShiftTime = { h: number; m: number };
+
 export type Shift = {
   code: string;
   name: string;
   note: string;
+  assignedStart: ShiftTime;
+  assignedEnd: ShiftTime;
 };
 
 export type ShiftGroup = {
@@ -9,44 +13,55 @@ export type ShiftGroup = {
   shifts: Shift[];
 };
 
+function shift(
+  code: string,
+  name: string,
+  note: string,
+  assignedStart: ShiftTime,
+  assignedEnd: ShiftTime,
+): Shift {
+  return { code, name, note, assignedStart, assignedEnd };
+}
+
 export const SHIFT_GROUPS: ShiftGroup[] = [
   {
     label: "Ca thường",
     shifts: [
-      { code: "K02", name: "5h00-16h30", note: "Ca thường" },
-      { code: "K04", name: "5h30-16h30", note: "Ca thường" },
-      { code: "K07", name: "6h00-16h30", note: "Ca thường" },
-      { code: "K10", name: "7h00-16h30", note: "Ca thường" },
-      { code: "K11", name: "7h30-16h30", note: "Ca thường" },
-      { code: "K12", name: "7h30-17h30", note: "Ca thường" },
+      shift("K02", "5h00-16h30", "Ca thường", { h: 5, m: 0 }, { h: 16, m: 30 }),
+      shift("K04", "5h30-16h30", "Ca thường", { h: 5, m: 30 }, { h: 16, m: 30 }),
+      shift("K07", "6h00-16h30", "Ca thường", { h: 6, m: 0 }, { h: 16, m: 30 }),
+      shift("K10", "7h00-16h30", "Ca thường", { h: 7, m: 0 }, { h: 16, m: 30 }),
+      shift("K11", "7h30-16h30", "Ca thường", { h: 7, m: 30 }, { h: 16, m: 30 }), // Bỏ ?
+      shift("K12", "7h30-17h30", "Ca thường", { h: 7, m: 30 }, { h: 17, m: 30 }), // Bỏ ?
+      // K18 ?
     ],
   },
   {
     label: "Ca tối",
     shifts: [
-      { code: "K15", name: "16h30-20h00", note: "Ca tối" },
+      shift("K15", "16h30-20h00", "Ca tối", { h: 16, m: 30 }, { h: 20, m: 0 }),
     ],
   },
   {
-    label: "Ca thứ 7 - CN",
+    label: "Ca T7-CN",
     shifts: [
-      { code: "K01", name: "5h00-14h30", note: "Ca thứ 7 - CN" },
-      { code: "K03", name: "5h30-15h00", note: "Ca thứ 7 - CN" },
-      { code: "K06", name: "6h00-15h30", note: "Ca thứ 7 - CN" },
-      { code: "K38", name: "6h30 - 16h00", note: "Ca thứ 7 - CN" },
-      { code: "K18", name: "7h30-17h00", note: "Ca thứ 7 - CN" },
-      { code: "K13", name: "8h00-17h30", note: "Ca thứ 7 - CN" },
-      { code: "K14", name: "8h30-18h00", note: "Ca thứ 7 - CN" },
+      shift("K01", "5h00-14h30", "Ca T7-CN", { h: 5, m: 0 }, { h: 14, m: 30 }),
+      shift("K03", "5h30-15h00", "Ca T7-CN", { h: 5, m: 30 }, { h: 15, m: 0 }),
+      shift("K06", "6h00-15h30", "Ca T7-CN", { h: 6, m: 0 }, { h: 15, m: 30 }),
+      shift("K38", "6h30-16h00", "Ca T7-CN", { h: 6, m: 30 }, { h: 16, m: 0 }), // ?
+      shift("K18", "7h30-17h00", "Ca T7-CN", { h: 7, m: 30 }, { h: 17, m: 0 }), // Bỏ ?
+      shift("K13", "8h00-17h30", "Ca T7-CN", { h: 8, m: 0 }, { h: 17, m: 30 }),
+      shift("K14", "8h30-18h00", "Ca T7-CN", { h: 8, m: 30 }, { h: 18, m: 0 }),
     ],
   },
   {
     label: "Nghỉ chiều",
     shifts: [
-      { code: "K35", name: "5h00 - 12h00", note: "Nghỉ chiều" },
-      { code: "K36", name: "5h30 - 12h00", note: "Nghỉ chiều" },
-      { code: "K37", name: "6h00 - 12h00", note: "Nghỉ chiều" },
-      { code: "K39", name: "7h30 - 12h00", note: "Nghỉ chiều" },
-      // { code: "K40", name: "13h30 - 17h30", note: "Nghỉ chiều" },
+      shift("K35", "5h00-12h00", "Nghỉ chiều", { h: 5, m: 0 }, { h: 12, m: 0 }),
+      shift("K36", "5h30-12h00", "Nghỉ chiều", { h: 5, m: 30 }, { h: 12, m: 0 }),
+      shift("K37", "6h00-12h00", "Nghỉ chiều", { h: 6, m: 0 }, { h: 12, m: 0 }),
+      // K38 ?
+      shift("K39", "7h30-12h00", "Nghỉ chiều", { h: 7, m: 30 }, { h: 12, m: 0 }),
     ],
   },
 ];
@@ -71,7 +86,7 @@ export type ShiftSelectVariant = "default" | "weekday" | "weekend";
 const VARIANT_GROUP_LABELS: Record<ShiftSelectVariant, string[]> = {
   default: ["Ca thường"],
   weekday: ["Ca thường", AFTERNOON_OFF_LABEL],
-  weekend: ["Ca thứ 7 - CN"],
+  weekend: ["Ca T7-CN"],
 };
 
 export function getShiftGroupsForVariant(
@@ -85,4 +100,12 @@ export const EMPTY_SHIFT_VALUE = "__empty__";
 
 export function getShiftByCode(code: string): Shift | undefined {
   return SHIFTS.find((s) => s.code === code);
+}
+
+export function getShiftAssignedTimes(
+  code: string,
+): { start: ShiftTime; end: ShiftTime } | null {
+  const s = getShiftByCode(code);
+  if (!s) return null;
+  return { start: s.assignedStart, end: s.assignedEnd };
 }

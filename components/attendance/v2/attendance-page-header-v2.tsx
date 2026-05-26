@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { ClearAttendanceDataButton } from "@/components/attendance/clear-attendance-data-button";
 import { CreateWeekDialog } from "@/components/attendance/create-week-dialog";
-import { ExportExcelButton } from "@/components/attendance/export-excel-button";
 import { Button } from "@/components/ui/button";
 import {
   selectActiveWeekStart,
@@ -40,7 +39,6 @@ export function AttendancePageHeaderV2() {
         <Button variant="outline" asChild>
           <Link href="/">Bản cũ (v1)</Link>
         </Button>
-        <ExportExcelButton />
         <ClearAttendanceDataButton />
         <CreateWeekDialog
           onCreateWeek={createWeek}
