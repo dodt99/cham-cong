@@ -1,6 +1,6 @@
 "use client";
 
-import { EveningDaySection } from "@/components/attendance/v2/evening-day-section";
+import { EveningDaySection } from "@/components/attendance/evening-day-section";
 import { WEEKDAY_DAY_KEYS } from "@/lib/attendance/evening-selectors";
 import { selectActiveWeekStart } from "@/lib/attendance/selectors";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";

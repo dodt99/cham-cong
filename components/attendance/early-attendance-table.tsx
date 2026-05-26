@@ -1,6 +1,6 @@
 "use client";
 
-import { EarlyExportExcelButton } from "@/components/attendance/v2/early-export-excel-button";
+import { EarlyExportExcelButton } from "@/components/attendance/early-export-excel-button";
 import {
   Table,
   TableBody,

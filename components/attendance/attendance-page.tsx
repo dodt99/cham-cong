@@ -1,7 +1,7 @@
 "use client";
 
 import { AttendancePageHeader } from "@/components/attendance/attendance-page-header";
-import { AttendanceTableSection } from "@/components/attendance/attendance-table-section";
+import { AttendanceSectionTabs } from "@/components/attendance/attendance-section-tabs";
 import { AttendanceWeekTabs } from "@/components/attendance/attendance-week-tabs";
 import { useAttendanceHydrated } from "@/hooks/use-attendance-hydrated";
 
@@ -20,7 +20,7 @@ export function AttendancePage() {
     <div className="mx-auto flex w-full max-w-[100%] flex-col gap-6 p-4 sm:p-6 lg:p-8">
       <AttendancePageHeader />
       <AttendanceWeekTabs />
-      <AttendanceTableSection />
+      <AttendanceSectionTabs />
     </div>
   );
 }

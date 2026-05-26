@@ -1,10 +1,10 @@
 "use client";
 
-import { EarlyAttendanceTable } from "@/components/attendance/v2/early-attendance-table";
-import { EveningTabContent } from "@/components/attendance/v2/evening-tab-content";
-import { ExportPreviewTable } from "@/components/attendance/v2/export-preview-table";
-import { WeekdayAttendanceTable } from "@/components/attendance/v2/weekday-attendance-table";
-import { WeekendAttendanceTable } from "@/components/attendance/v2/weekend-attendance-table";
+import { EarlyAttendanceTable } from "@/components/attendance/early-attendance-table";
+import { EveningTabContent } from "@/components/attendance/evening-tab-content";
+import { ExportPreviewTable } from "@/components/attendance/export-preview-table";
+import { WeekdayAttendanceTable } from "@/components/attendance/weekday-attendance-table";
+import { WeekendAttendanceTable } from "@/components/attendance/weekend-attendance-table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectHasActiveSheet } from "@/lib/attendance/selectors";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";

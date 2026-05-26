@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
-
 import { ClearAttendanceDataButton } from "@/components/attendance/clear-attendance-data-button";
 import { CreateWeekDialog } from "@/components/attendance/create-week-dialog";
-import { ExportExcelButton } from "@/components/attendance/export-excel-button";
-import { selectActiveWeekStart, selectWeekStarts } from "@/lib/attendance/selectors";
-import { useAttendanceZustandStore } from "@/stores/attendance-store";
-import { Button } from "@/components/ui/button";
+import {
+  selectActiveWeekStart,
+  selectWeekStarts,
+} from "@/lib/attendance/selectors";
 import { formatWeekRange } from "@/lib/utils/week";
+import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function AttendancePageHeader() {
@@ -30,10 +29,6 @@ export function AttendancePageHeader() {
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <Button variant="outline" asChild>
-          <Link href="/cham-cong-v2">Bản mới (v2)</Link>
-        </Button>
-        <ExportExcelButton />
         <ClearAttendanceDataButton />
         <CreateWeekDialog
           onCreateWeek={createWeek}
