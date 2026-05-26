@@ -73,18 +73,18 @@ function AttendanceEmployeeRowInner({
 
         return (
           <TableCell key={day} className="align-top">
-            <div className="flex flex-col gap-1 px-2">
+            <div className="flex flex-col items-center gap-1 px-2">
               <ShiftSelect
                 variant={isWeekend ? "weekend" : "weekday"}
                 value={dayEntry.shiftCode}
                 onChange={(code) => setDayShift(employeeId, day, code)}
-                className="w-full min-w-[150px]"
+                className="w-full min-w-[150px] max-w-[250px]"
               />
               <WorkLocationSelect
                 value={dayEntry.locationKey}
                 onChange={(key) => setDayLocation(employeeId, day, key)}
                 disabled={dayEntry.shiftCode === null}
-                className="w-full min-w-[150px]"
+                className="w-full min-w-[150px] max-w-[250px]"
               />
               {showEvening && !isWeekend && (
                 <div className="flex flex-row gap-2">

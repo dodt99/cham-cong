@@ -45,7 +45,7 @@ export function WorkLocationSelect({
       </SelectTrigger>
       <SelectContent className="max-h-[min(24rem,70vh)]">
         <SelectItem value={EMPTY_LOCATION_VALUE}>
-          <span className="text-muted-foreground">— Chưa chọn —</span>
+          <span className="text-muted-foreground">-</span>
         </SelectItem>
         {locations.map((loc) => (
           <SelectItem

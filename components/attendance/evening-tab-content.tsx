@@ -11,7 +11,7 @@ export function EveningTabContent() {
   if (!weekStart) return null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
       {WEEKDAY_DAY_KEYS.map((day) => (
         <EveningDaySection key={day} weekStart={weekStart} day={day} />
       ))}

@@ -45,7 +45,7 @@ export function ShiftSelect({
       </SelectTrigger>
       <SelectContent className="max-h-[min(24rem,70vh)]">
         <SelectItem value={EMPTY_SHIFT_VALUE}>
-          <span className="text-muted-foreground">— Nghỉ —</span>
+          <span className="text-muted-foreground">- Nghỉ -</span>
         </SelectItem>
         {shiftGroups.map((group) => (
           <SelectGroup key={group.label}>

@@ -46,6 +46,9 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   const [pendingEmployeeId, setPendingEmployeeId] = useState(
     EMPTY_EMPLOYEE_VALUE,
   );
+  const [pendingLocationKey, setPendingLocationKey] = useState<string | null>(
+    null,
+  );
 
   const assignedIds = useMemo(
     () => new Set(assignments.map((a) => a.employeeId)),
@@ -60,7 +63,11 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   const handleAdd = () => {
     if (pendingEmployeeId === EMPTY_EMPLOYEE_VALUE) return;
     setExtraEvening(pendingEmployeeId, day, true);
+    if (pendingLocationKey) {
+      setEveningLocation(pendingEmployeeId, day, pendingLocationKey);
+    }
     setPendingEmployeeId(EMPTY_EMPLOYEE_VALUE);
+    setPendingLocationKey(null);
   };
 
   const getEmployeeName = (employeeId: string) =>
@@ -73,17 +80,17 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
       </h3>
 
       {assignments.length === 0 ? (
-        <p className="mb-3 text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Chưa có nhân viên ca tối.
         </p>
       ) : (
-        <ul className="mb-3 flex flex-col gap-2">
+        <ul className="flex flex-col gap-2">
           {assignments.map((assignment) => (
             <li
               key={assignment.employeeId}
-              className="flex flex-wrap items-center gap-2 rounded-md border bg-background p-2"
+              className="flex items-center gap-2 rounded-md border bg-background p-2"
             >
-              <span className="min-w-[140px] text-sm font-medium">
+              <span className="min-w-[140px] flex-1 min-w-0 text-sm font-medium">
                 <span className="font-mono text-xs text-muted-foreground">
                   {assignment.employeeId}
                 </span>
@@ -95,7 +102,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
                   setEveningLocation(assignment.employeeId, day, key)
                 }
                 placeholder="Vị trí ca tối"
-                className="min-w-[200px] flex-1"
+                className="w-[200px]"
               />
               <Button
                 type="button"
@@ -113,7 +120,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
         </ul>
       )}
 
-      <div className="flex flex-wrap items-end gap-2">
+      <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-dashed pt-3">
         <div className="grid min-w-[220px] gap-1">
           <Label htmlFor={`evening-add-${day}`} className="text-xs">
             Thêm nhân viên
@@ -127,7 +134,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value={EMPTY_EMPLOYEE_VALUE}>
-                <span className="text-muted-foreground">— Chọn —</span>
+                <span className="text-muted-foreground">-</span>
               </SelectItem>
               {availableEmployees.map((employee) => (
                 <SelectItem key={employee.id} value={employee.id}>
@@ -139,6 +146,14 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
               ))}
             </SelectContent>
           </Select>
+        </div>
+        <div className="grid gap-1">
+          <Label className="text-xs">Vị trí</Label>
+          <WorkLocationSelect
+            value={pendingLocationKey}
+            onChange={setPendingLocationKey}
+            placeholder="Vị trí"
+          />
         </div>
         <Button
           type="button"
