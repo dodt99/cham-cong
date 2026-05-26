@@ -3,6 +3,7 @@
 import {
   EMPTY_LOCATION_VALUE,
   WORK_LOCATIONS,
+  type WorkLocation,
 } from "@/lib/constants/work-locations";
 import {
   Select,
@@ -18,6 +19,7 @@ type WorkLocationSelectProps = {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  locations?: WorkLocation[];
 };
 
 export function WorkLocationSelect({
@@ -26,6 +28,7 @@ export function WorkLocationSelect({
   placeholder = "Địa điểm",
   className,
   disabled = false,
+  locations = WORK_LOCATIONS,
 }: WorkLocationSelectProps) {
   const selectValue = value ?? EMPTY_LOCATION_VALUE;
 
@@ -44,7 +47,7 @@ export function WorkLocationSelect({
         <SelectItem value={EMPTY_LOCATION_VALUE}>
           <span className="text-muted-foreground">— Chưa chọn —</span>
         </SelectItem>
-        {WORK_LOCATIONS.map((loc) => (
+        {locations.map((loc) => (
           <SelectItem
             key={loc.key}
             value={loc.key}

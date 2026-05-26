@@ -44,6 +44,10 @@ export const WORK_LOCATIONS: WorkLocation[] = WORK_LOCATION_ENTRIES.map(
   }),
 );
 
+export const EVENING_WORK_LOCATIONS = WORK_LOCATIONS.filter((loc) =>
+  loc.name.includes("Ca tối"),
+);
+
 export const EMPTY_LOCATION_VALUE = "__empty_location__";
 
 const LOCATION_BY_KEY = new Map(

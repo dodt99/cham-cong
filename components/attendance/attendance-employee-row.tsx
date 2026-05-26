@@ -9,14 +9,22 @@ import { Label } from "@/components/ui/label";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { selectEmployeeRow } from "@/lib/attendance/selectors";
 import { EMPLOYEES } from "@/lib/constants/employees";
-import { DAY_KEYS } from "@/lib/types/attendance";
+import { DAY_KEYS, type DayKey } from "@/lib/types/attendance";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
 type AttendanceEmployeeRowProps = {
   employeeId: string;
+  dayKeys?: readonly DayKey[];
+  showDefaultColumn?: boolean;
+  showEvening?: boolean;
 };
 
-function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) {
+function AttendanceEmployeeRowInner({
+  employeeId,
+  dayKeys = DAY_KEYS,
+  showDefaultColumn = true,
+  showEvening = true,
+}: AttendanceEmployeeRowProps) {
   const row = useAttendanceZustandStore(selectEmployeeRow(employeeId));
   const setDefaultShift = useAttendanceZustandStore((s) => s.setDefaultShift);
   const setDefaultLocation = useAttendanceZustandStore(
@@ -40,24 +48,26 @@ function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) 
       <TableCell className="sticky left-[90px] z-10 bg-background font-medium shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
         {employee.fullName}
       </TableCell>
-      <TableCell className="align-top">
-        <div className="flex flex-col gap-1">
-          <ShiftSelect
-            variant="default"
-            value={row.defaultShiftCode}
-            onChange={(code) => setDefaultShift(employeeId, code)}
-            placeholder="Ca mặc định"
-            className="w-full min-w-[150px]"
-          />
-          <WorkLocationSelect
-            value={row.defaultLocationKey}
-            onChange={(key) => setDefaultLocation(employeeId, key)}
-            placeholder="Địa điểm mặc định"
-            className="w-full min-w-[150px]"
-          />
-        </div>
-      </TableCell>
-      {DAY_KEYS.map((day) => {
+      {showDefaultColumn && (
+        <TableCell className="align-top">
+          <div className="flex flex-col gap-1">
+            <ShiftSelect
+              variant="default"
+              value={row.defaultShiftCode}
+              onChange={(code) => setDefaultShift(employeeId, code)}
+              placeholder="Ca mặc định"
+              className="w-full min-w-[150px]"
+            />
+            <WorkLocationSelect
+              value={row.defaultLocationKey}
+              onChange={(key) => setDefaultLocation(employeeId, key)}
+              placeholder="Địa điểm mặc định"
+              className="w-full min-w-[150px]"
+            />
+          </div>
+        </TableCell>
+      )}
+      {dayKeys.map((day) => {
         const dayEntry = row.days[day];
         const isWeekend = day === "sat" || day === "sun";
 
@@ -76,7 +86,7 @@ function AttendanceEmployeeRowInner({ employeeId }: AttendanceEmployeeRowProps) 
                 disabled={dayEntry.shiftCode === null}
                 className="w-full min-w-[150px]"
               />
-              {!isWeekend && (
+              {showEvening && !isWeekend && (
                 <div className="flex flex-row gap-2">
                   <div className="flex items-center gap-2">
                     <Checkbox
