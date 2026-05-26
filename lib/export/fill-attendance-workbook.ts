@@ -3,6 +3,8 @@ import {
 } from "@/lib/export/build-attendance-rows";
 import {
   DATA_START_ROW,
+  EXPORT_JOB_CODE,
+  OFF_LABEL,
   TEMPLATE_PATH,
   WEEKEND_DATE_FILL_ARGB,
 } from "@/lib/export/constants";
@@ -50,6 +52,10 @@ export async function fillAndDownloadAttendanceExcel(
     excelRow.getCell(3).value = formatDateForExport(row.fromDate);
     excelRow.getCell(4).value = formatDateForExport(row.toDate);
     excelRow.getCell(5).value = row.shiftLabel;
+
+    if (row.shiftLabel !== OFF_LABEL) {
+      excelRow.getCell(7).value = EXPORT_JOB_CODE;
+    }
 
     if (isWeekendExportRow(row.fromDate, row.toDate)) {
       applyWeekendDateCellFill(excelRow.getCell(3));

@@ -2,6 +2,8 @@ import { SHIFT_GROUPS } from "@/lib/constants/shifts";
 
 export const OFF_LABEL = "Nghỉ";
 
+export const EXPORT_JOB_CODE = "K006";
+
 export const EVENING_SHIFT_CODE = SHIFT_GROUPS[1].shifts[0].code;
 
 export const TEMPLATE_PATH = "/templates/attendance-empty.xlsx";
