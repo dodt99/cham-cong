@@ -1,3 +1,4 @@
+import { EMPLOYEES } from "@/lib/constants/employees";
 import { describe, expect, it } from "vitest";
 import {
   buildAttendanceRows,
@@ -282,7 +283,7 @@ describe("buildEmployeeSegments", () => {
     ]);
   });
 
-it("treats full week off as merged weekdays and separate weekend rows", () => {
+  it("treats full week off as merged weekdays and separate weekend rows", () => {
     const row = createEmptyEmployeeRow();
     expect(segmentLabels(row)).toEqual([
       { from: "2026-05-18", to: "2026-05-22", shift: OFF_LABEL, location: null },
@@ -374,6 +375,28 @@ it("treats full week off as merged weekdays and separate weekend rows", () => {
 });
 
 describe("buildAttendanceRows", () => {
+  it("sets column 10 to Nghỉ chiều for afternoon-off shifts", () => {
+    const employeeId = EMPLOYEES[0]!.id;
+    const sheet: WeekSheet = {
+      weekStart: WEEK_START,
+      rows: {
+        [employeeId]: makeRow({
+          mon: { shiftCode: "K35", locationKey: LOC_TANG1 },
+          tue: { shiftCode: "K07", locationKey: LOC_TANG1 },
+        }),
+      },
+    };
+
+    const rows = buildAttendanceRows(sheet).filter(
+      (r) => r.employeeId === employeeId,
+    );
+    const afternoonOff = rows.find((r) => r.shiftLabel === "K35");
+    const regular = rows.find((r) => r.shiftLabel === "K07");
+
+    expect(afternoonOff?.note).toBe("Nghỉ chiều");
+    expect(regular?.note).toBeNull();
+  });
+
   it("includes one off row per empty employee in full sheet", () => {
     const sheet: WeekSheet = {
       weekStart: WEEK_START,

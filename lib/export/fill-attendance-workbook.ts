@@ -61,6 +61,10 @@ export async function fillAndDownloadAttendanceExcel(
       excelRow.getCell(9).value = row.locationCode;
     }
 
+    if (row.note) {
+      excelRow.getCell(10).value = row.note;
+    }
+
     if (isWeekendExportRow(row.fromDate, row.toDate)) {
       applyWeekendDateCellFill(excelRow.getCell(3));
       applyWeekendDateCellFill(excelRow.getCell(4));

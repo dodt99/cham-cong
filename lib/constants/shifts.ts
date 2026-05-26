@@ -40,13 +40,13 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
     ],
   },
   {
-    label: "Nghỉ nửa ngày",
+    label: "Nghỉ chiều",
     shifts: [
-      { code: "K35", name: "5h00 - 12h00", note: "Nghỉ nửa ngày" },
-      { code: "K36", name: "5h30 - 12h00", note: "Nghỉ nửa ngày" },
-      { code: "K37", name: "6h00 - 12h00", note: "Nghỉ nửa ngày" },
-      { code: "K39", name: "7h30 - 12h00", note: "Nghỉ nửa ngày" },
-      { code: "K40", name: "13h30 - 17h30", note: "Nghỉ nửa ngày" },
+      { code: "K35", name: "5h00 - 12h00", note: "Nghỉ chiều" },
+      { code: "K36", name: "5h30 - 12h00", note: "Nghỉ chiều" },
+      { code: "K37", name: "6h00 - 12h00", note: "Nghỉ chiều" },
+      { code: "K39", name: "7h30 - 12h00", note: "Nghỉ chiều" },
+      // { code: "K40", name: "13h30 - 17h30", note: "Nghỉ chiều" },
     ],
   },
 ];
@@ -54,11 +54,23 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
 /** Flat list for lookup by code */
 export const SHIFTS: Shift[] = SHIFT_GROUPS.flatMap((g) => g.shifts);
 
+export const AFTERNOON_OFF_LABEL = "Nghỉ chiều";
+
+const AFTERNOON_OFF_SHIFT_CODES = new Set(
+  SHIFT_GROUPS.find((g) => g.label === AFTERNOON_OFF_LABEL)?.shifts.map(
+    (s) => s.code,
+  ) ?? [],
+);
+
+export function isAfternoonOffShift(code: string): boolean {
+  return AFTERNOON_OFF_SHIFT_CODES.has(code);
+}
+
 export type ShiftSelectVariant = "default" | "weekday" | "weekend";
 
 const VARIANT_GROUP_LABELS: Record<ShiftSelectVariant, string[]> = {
   default: ["Ca thường"],
-  weekday: ["Ca thường", "Nghỉ nửa ngày"],
+  weekday: ["Ca thường", AFTERNOON_OFF_LABEL],
   weekend: ["Ca thứ 7 - CN"],
 };
 

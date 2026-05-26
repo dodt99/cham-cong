@@ -1,4 +1,8 @@
 import { EMPLOYEES } from "@/lib/constants/employees";
+import {
+  AFTERNOON_OFF_LABEL,
+  isAfternoonOffShift,
+} from "@/lib/constants/shifts";
 import { getWorkLocationCode } from "@/lib/constants/work-locations";
 import { EVENING_SHIFT_CODE, OFF_LABEL } from "@/lib/export/constants";
 import {
@@ -17,6 +21,7 @@ export type AttendanceExportRow = {
   toDate: string;
   shiftLabel: string;
   locationCode: string | null;
+  note: string | null;
 };
 
 type DaySlice = {
@@ -225,6 +230,9 @@ export function buildAttendanceRows(sheet: WeekSheet): AttendanceExportRow[] {
         toDate: segment.toDate,
         shiftLabel: segment.shiftLabel,
         locationCode: segment.locationCode,
+        note: isAfternoonOffShift(segment.shiftLabel)
+          ? AFTERNOON_OFF_LABEL
+          : null,
       });
     }
   }
