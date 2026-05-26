@@ -33,7 +33,7 @@ export function WeekendExportAttendanceTable() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          Mỗi dòng là một ngày T7 hoặc CN của một nhân viên.
+          Thanh toán thứ 7 - chủ nhật
         </p>
         <WeekendExportExcelButton />
       </div>

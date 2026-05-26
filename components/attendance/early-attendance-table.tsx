@@ -30,8 +30,7 @@ export function EarlyAttendanceTable() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          Mỗi dòng là một ngày làm việc (T2–T6) của một nhân viên. Ngày nghỉ
-          không hiển thị.
+          Thanh toán làm sớm
         </p>
         <EarlyExportExcelButton />
       </div>

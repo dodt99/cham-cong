@@ -27,7 +27,7 @@ export function ExportPreviewTable() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          Đây là dữ liệu sẽ ghi vào Excel khi bấm Xuất file.
+          Bảng Fast chấm công hàng ngày
         </p>
         <ExportExcelButton />
       </div>
