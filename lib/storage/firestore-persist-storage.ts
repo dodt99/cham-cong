@@ -7,6 +7,7 @@ import {
   loadAttendance,
   saveAttendance,
 } from "@/lib/storage/firestore-attendance-repository";
+import { useFirestoreSyncStatus } from "@/lib/storage/firestore-sync-status";
 import { getApplyingRemote } from "@/lib/storage/remote-sync-flag";
 import {
   normalizePersistedPayload,
@@ -47,14 +48,20 @@ export function createFirestorePersistStorage(
       const store = parseStoreFromPersistValue(value);
       if (!store) return;
 
+      const seq = useFirestoreSyncStatus.getState().beginSaving();
       flush(name);
       timers.set(
         name,
         setTimeout(() => {
           timers.delete(name);
-          void saveAttendance(store).catch((err) => {
-            console.error("[firestore] save failed:", err);
-          });
+          void saveAttendance(store)
+            .then(() => {
+              useFirestoreSyncStatus.getState().markSaved(seq);
+            })
+            .catch((err) => {
+              useFirestoreSyncStatus.getState().markError(seq, err);
+              console.error("[firestore] save failed:", err);
+            });
         }, delayMs),
       );
     },
