@@ -1,4 +1,4 @@
-import { EMPLOYEES } from "@/lib/constants/employees";
+import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import { getShiftByCode, type ShiftTime } from "@/lib/constants/shifts";
 import { getWorkLocationBlock } from "@/lib/constants/work-locations";
 import {
@@ -39,7 +39,7 @@ export function buildWeekendAttendanceRows(
 ): WeekendAttendanceRow[] {
   const rows: WeekendAttendanceRow[] = [];
 
-  for (const employee of EMPLOYEES) {
+  for (const employee of EMPLOYEES_EVENING_AND_WEEKEND) {
     const weekRow = sheet.rows[employee.id] ?? createEmptyEmployeeRow();
 
     for (const day of WEEKEND_DAY_KEYS) {
@@ -76,7 +76,7 @@ export function buildWeekendRowForEmployeeDay(
 ): WeekendAttendanceRow | null {
   if (shiftCode === null) return null;
 
-  const employee = EMPLOYEES.find((e) => e.id === employeeId);
+  const employee = EMPLOYEES_EVENING_AND_WEEKEND.find((e) => e.id === employeeId);
   if (!employee) return null;
 
   const shift = getShiftByCode(shiftCode);

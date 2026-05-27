@@ -14,12 +14,15 @@ import {
 } from "@/components/ui/table";
 import { WEEKEND_DAY_KEYS } from "@/lib/attendance/evening-selectors";
 import { selectActiveWeekStart } from "@/lib/attendance/selectors";
+import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { formatDayHeader } from "@/lib/utils/week";
 
 export function WeekendAttendanceTable() {
   const weekStart = useAttendanceZustandStore(selectActiveWeekStart);
-  const { searchInput, setSearchInput, filteredEmployees } = useEmployeeSearch();
+  const { searchInput, setSearchInput, filteredEmployees } = useEmployeeSearch(
+    EMPLOYEES_EVENING_AND_WEEKEND,
+  );
 
   if (!weekStart) return null;
 

@@ -10,7 +10,7 @@ import {
   EMPTY_EVENING_ASSIGNMENTS,
   buildEveningAssignments,
 } from "@/lib/attendance/evening-selectors";
-import { EMPLOYEES } from "@/lib/constants/employees";
+import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import type { DayKey } from "@/lib/types/attendance";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { formatDayHeader } from "@/lib/utils/week";
@@ -48,7 +48,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   );
 
   const availableEmployees = useMemo(
-    () => EMPLOYEES.filter((e) => !assignedIds.has(e.id)),
+    () => EMPLOYEES_EVENING_AND_WEEKEND.filter((e) => !assignedIds.has(e.id)),
     [assignedIds],
   );
 
@@ -63,7 +63,8 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   };
 
   const getEmployeeName = (employeeId: string) =>
-    EMPLOYEES.find((e) => e.id === employeeId)?.fullName ?? employeeId;
+    EMPLOYEES_EVENING_AND_WEEKEND.find((e) => e.id === employeeId)?.fullName ??
+    employeeId;
 
   return (
     <section className="rounded-lg border bg-card p-4">

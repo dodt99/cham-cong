@@ -41,3 +41,26 @@ export const EMPLOYEES: Employee[] = [
   { id: "30068", fullName: "Nguyễn Thị Minh Hòa", taxCode: "8571815717" },
   { id: "23160", fullName: "PHAN THỊ HỒNG THÚY", taxCode: "8009287175" },
 ];
+
+export const EMPLOYEES_K2: Employee[] = [
+  { id: "19435", fullName: "Ngô Thị Ánh Nguyệt", taxCode: "0105209369" },
+  { id: "19441", fullName: "Nguyễn Thị Hoa", taxCode: "8338107607" },
+  { id: "19440", fullName: "Nguyễn Thị Chuyên", taxCode: "8338107597" },
+  { id: "19437", fullName: "Nguyễn Hải Quyên", taxCode: "8119343471" },
+  { id: "19431", fullName: "Đặng Lan Phương", taxCode: "8480133805" },
+  { id: "19434", fullName: "Lê Quang Trung", taxCode: "8429284755" },
+  { id: "19169", fullName: "Đỗ Như Thành", taxCode: "8626680596" },
+  { id: "23420", fullName: "Nguyễn Thị Thu Hồng", taxCode: "8115110652" },
+  { id: "23741", fullName: "Vũ Quang Anh", taxCode: "8712601887" },
+  { id: "24686", fullName: "Vũ Anh Văn", taxCode: "8124737947" },
+  { id: "30065", fullName: "Hoàng Thị Thủy", taxCode: "8573268202" },
+  { id: "30069", fullName: "Đặng Thị Thu Phương", taxCode: "8425272170" },
+  { id: "19436", fullName: "Nguyễn Diệu Hoa", taxCode: "8331453125" },
+  { id: "23746", fullName: "Nguyễn Ngọc Hoàng Yến", taxCode: "8439532809" },
+  { id: "23744", fullName: "Trần Thị Hương", taxCode: "8556638559" },
+];
+
+export const EMPLOYEES_EVENING_AND_WEEKEND: Employee[] = [
+  ...EMPLOYEES,
+  ...EMPLOYEES_K2,
+];

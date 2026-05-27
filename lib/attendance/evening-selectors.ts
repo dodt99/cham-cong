@@ -1,5 +1,5 @@
 import type { AttendanceState } from "@/stores/attendance-store";
-import { EMPLOYEES } from "@/lib/constants/employees";
+import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import type { DayKey, WeekSheet } from "@/lib/types/attendance";
 
 export type EveningAssignment = {
@@ -17,7 +17,7 @@ export function buildEveningAssignments(
   sheet: WeekSheet,
   day: DayKey,
 ): EveningAssignment[] {
-  return EMPLOYEES.flatMap((employee) => {
+  return EMPLOYEES_EVENING_AND_WEEKEND.flatMap((employee) => {
     const entry = sheet.rows[employee.id]?.days[day];
     if (!entry?.extraEvening) return [];
     return [

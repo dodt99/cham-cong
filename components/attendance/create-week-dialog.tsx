@@ -92,7 +92,7 @@ export function CreateWeekDialog({
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)} className="mt-1 sm:mt-0">
             Hủy
           </Button>
           <Button onClick={handleConfirm}>Tạo bảng</Button>
