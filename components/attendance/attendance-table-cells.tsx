@@ -53,7 +53,7 @@ function AttendanceDefaultFieldsInner({
     <div
       className={cn(
         "flex gap-2",
-        isRow ? "flex-row items-start" : "flex-col gap-1",
+        isRow ? "flex-row items-start" : "flex-col items-center gap-1",
         className,
       )}
     >
@@ -85,7 +85,7 @@ function AttendanceDefaultColumnCellInner({
     <TableCell className="align-top">
       <AttendanceDefaultFields
         employeeId={employeeId}
-        className="min-w-[150px] max-w-[200px]"
+        className="mx-auto min-w-[150px] max-w-[200px]"
       />
     </TableCell>
   );
@@ -169,7 +169,7 @@ function AttendanceDayCellInner({ employeeId, day }: AttendanceDayCellProps) {
       <AttendanceDayFields
         employeeId={employeeId}
         day={day}
-        className="min-w-[150px] max-w-[200px]"
+        className="mx-auto min-w-[150px] max-w-[200px]"
       />
     </TableCell>
   );

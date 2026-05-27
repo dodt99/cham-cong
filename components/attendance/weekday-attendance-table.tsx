@@ -45,7 +45,9 @@ export function WeekdayAttendanceTable() {
               <TableHead className="sticky left-[90px] z-20 min-w-[160px] bg-background shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
                 Họ và tên
               </TableHead>
-              <TableHead className="min-w-[200px]">Mặc định</TableHead>
+              <TableHead className="min-w-[200px] text-center">
+                Mặc định
+              </TableHead>
               {WEEKDAY_DAY_KEYS.map((day) => (
                 <TableHead key={day} className="min-w-[220px] text-center">
                   {formatDayHeader(weekStart, day)}
