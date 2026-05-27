@@ -46,12 +46,12 @@ function AttendanceDefaultColumnCellInner({
           variant="default"
           value={defaults.defaultShiftCode}
           onChange={onShiftChange}
-          className="w-full min-w-[150px]"
+          className="w-full min-w-[150px] max-w-[200px]"
         />
         <WorkLocationSelect
           value={defaults.defaultLocationKey}
           onChange={onLocationChange}
-          className="w-full min-w-[150px]"
+          className="w-full min-w-[150px] max-w-[200px]"
         />
       </div>
     </TableCell>
@@ -92,14 +92,14 @@ function AttendanceDayCellInner({ employeeId, day }: AttendanceDayCellProps) {
           variant={isWeekend ? "weekend" : "weekday"}
           value={dayEntry.shiftCode}
           onChange={onShiftChange}
-          className="w-full min-w-[150px] max-w-[250px]"
+          className="w-full min-w-[150px] max-w-[200px]"
         />
         <WorkLocationSelect
           variant={isWeekend ? "weekend" : "default"}
           value={dayEntry.locationKey}
           onChange={onLocationChange}
           disabled={dayEntry.shiftCode === null}
-          className="w-full min-w-[150px] max-w-[250px]"
+          className="w-full min-w-[150px] max-w-[200px]"
         />
       </div>
     </TableCell>
