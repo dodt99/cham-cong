@@ -20,7 +20,7 @@ function parseStoreFromPersistValue(value: string): AttendanceStore | null {
 }
 
 export function createFirestorePersistStorage(
-  delayMs = 400,
+  delayMs = 1500,
 ): StateStorage {
   const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
@@ -48,12 +48,12 @@ export function createFirestorePersistStorage(
       const store = parseStoreFromPersistValue(value);
       if (!store) return;
 
-      const seq = useFirestoreSyncStatus.getState().beginSaving();
       flush(name);
       timers.set(
         name,
         setTimeout(() => {
           timers.delete(name);
+          const seq = useFirestoreSyncStatus.getState().beginSaving();
           void saveAttendance(store)
             .then(() => {
               useFirestoreSyncStatus.getState().markSaved(seq);
