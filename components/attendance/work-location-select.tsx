@@ -85,7 +85,7 @@ function WorkLocationSelectInner({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn("p-0", triggerClassName)}
+        className="w-[max(var(--radix-popover-trigger-width),14rem)] max-w-[min(20rem,calc(100vw-2rem))] p-0"
         align="start"
       >
         {open ? (
