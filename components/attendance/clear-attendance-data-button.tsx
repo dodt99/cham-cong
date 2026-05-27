@@ -45,12 +45,11 @@ export function ClearAttendanceDataButton() {
         <DialogHeader>
           <DialogTitle>Xóa toàn bộ dữ liệu chấm công?</DialogTitle>
           <DialogDescription>
-            Thao tác này xóa vĩnh viễn tất cả bảng chấm công đã lưu trên trình
-            duyệt ({weekStarts.length} tuần). Không thể hoàn tác.
+            Thao tác này xóa vĩnh viễn tất cả bảng chấm công. Không thể hoàn tác.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)} className="mt-1 sm:mt-0">
             Hủy
           </Button>
           <Button variant="destructive" onClick={handleConfirm}>

@@ -6,45 +6,12 @@ import {
   createEmptyWeekSheet,
   STORAGE_KEY,
 } from "@/lib/storage/attendance-storage";
-import { createDebouncedLocalStorage } from "@/lib/storage/debounced-storage";
+import { createFirestorePersistStorage } from "@/lib/storage/firestore-persist-storage";
 import {
   DAY_KEYS,
   type AttendanceStore,
   type DayKey,
-  type WeekSheet,
 } from "@/lib/types/attendance";
-
-function createAttendancePersistStorage() {
-  const debounced = createDebouncedLocalStorage(100);
-  return {
-    ...debounced,
-    getItem: (name: string) => {
-      if (typeof window === "undefined") return null;
-      const raw = localStorage.getItem(name);
-      if (!raw) return null;
-      try {
-        const parsed = JSON.parse(raw) as {
-          state?: AttendanceStore;
-          sheets?: Record<string, WeekSheet>;
-          activeWeekStart?: string | null;
-        };
-        if (parsed.state) return raw;
-        if (parsed.sheets && typeof parsed.sheets === "object") {
-          return JSON.stringify({
-            state: {
-              sheets: parsed.sheets,
-              activeWeekStart: parsed.activeWeekStart ?? null,
-            },
-            version: 0,
-          });
-        }
-      } catch {
-        return null;
-      }
-      return null;
-    },
-  };
-}
 
 type AttendanceActions = {
   createWeek: (weekStart: string) => void;
@@ -246,7 +213,7 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => createAttendancePersistStorage()),
+      storage: createJSONStorage(() => createFirestorePersistStorage()),
       partialize: (state) => ({
         sheets: state.sheets,
         activeWeekStart: state.activeWeekStart,

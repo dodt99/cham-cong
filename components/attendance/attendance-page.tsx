@@ -2,10 +2,25 @@
 
 import { AttendancePageHeader } from "@/components/attendance/attendance-page-header";
 import { AttendanceSectionTabs } from "@/components/attendance/attendance-section-tabs";
+import { Button } from "@/components/ui/button";
 import { useAttendanceHydrated } from "@/hooks/use-attendance-hydrated";
 
 export function AttendancePage() {
-  const hydrated = useAttendanceHydrated();
+  const { hydrated, error, retry } = useAttendanceHydrated();
+
+  if (error) {
+    return (
+      <div className="mx-auto flex min-h-[40vh] max-w-md flex-col items-center justify-center gap-4 p-6 text-center">
+        <p className="text-sm text-destructive">{error}</p>
+        <p className="text-sm text-muted-foreground">
+          Kiểm tra cấu hình Firebase
+        </p>
+        <Button type="button" variant="outline" onClick={retry}>
+          Thử lại
+        </Button>
+      </div>
+    );
+  }
 
   if (!hydrated) {
     return (
