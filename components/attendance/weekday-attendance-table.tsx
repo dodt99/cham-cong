@@ -2,28 +2,38 @@
 
 import { AttendanceEmployeeRow } from "@/components/attendance/attendance-employee-row";
 import { AttendanceEmployeeList } from "@/components/attendance/attendance-employee-list";
+import { EmployeeSearchInput } from "@/components/attendance/employee-search-input";
+import { useEmployeeSearch } from "@/hooks/use-employee-search";
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { WEEKDAY_DAY_KEYS } from "@/lib/attendance/evening-selectors";
 import { selectActiveWeekStart } from "@/lib/attendance/selectors";
-import { EMPLOYEES } from "@/lib/constants/employees";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { formatDayHeader } from "@/lib/utils/week";
 
 export function WeekdayAttendanceTable() {
   const weekStart = useAttendanceZustandStore(selectActiveWeekStart);
+  const { searchInput, setSearchInput, filteredEmployees } = useEmployeeSearch();
 
   if (!weekStart) return null;
 
+  const columnCount = WEEKDAY_DAY_KEYS.length + 3;
+
   return (
     <>
+      <EmployeeSearchInput value={searchInput} onChange={setSearchInput} />
       <div className="md:hidden">
-        <AttendanceEmployeeList dayKeys={WEEKDAY_DAY_KEYS} showDefaultColumn />
+        <AttendanceEmployeeList
+          dayKeys={WEEKDAY_DAY_KEYS}
+          showDefaultColumn
+          employees={filteredEmployees}
+        />
       </div>
       <div className="hidden min-w-0 max-w-full rounded-md border md:block">
         <Table>
@@ -44,14 +54,25 @@ export function WeekdayAttendanceTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {EMPLOYEES.map((employee) => (
-              <AttendanceEmployeeRow
-                key={employee.id}
-                employee={employee}
-                dayKeys={WEEKDAY_DAY_KEYS}
-                showDefaultColumn
-              />
-            ))}
+            {filteredEmployees.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columnCount}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  Không tìm thấy nhân viên phù hợp.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredEmployees.map((employee) => (
+                <AttendanceEmployeeRow
+                  key={employee.id}
+                  employee={employee}
+                  dayKeys={WEEKDAY_DAY_KEYS}
+                  showDefaultColumn
+                />
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

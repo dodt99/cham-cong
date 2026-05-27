@@ -40,7 +40,7 @@ export function EarlyAttendanceTable() {
             <TableRow>
               <TableHead className="min-w-[80px]">Mã NV</TableHead>
               <TableHead className="min-w-[160px]">Họ và tên</TableHead>
-              <TableHead className="min-w-[100px]">Ngày làm việc</TableHead>
+              <TableHead className="min-w-[100px]">Ngày làm</TableHead>
               <TableHead className="min-w-[140px]">
                 Bắt đầu ca
               </TableHead>
