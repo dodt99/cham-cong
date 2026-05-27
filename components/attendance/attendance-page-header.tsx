@@ -28,16 +28,16 @@ export function AttendancePageHeader() {
   const selectedWeek = activeWeekStart ?? sortedWeekStarts[0] ?? null;
 
   return (
-    <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex flex-col gap-3">
+    <header className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex min-w-0 flex-col gap-3">
         {/* <h1 className="text-2xl font-bold tracking-tight">Chấm công</h1> */}
         {sortedWeekStarts.length > 0 && selectedWeek && (
-          <div className="flex items-center gap-2">
-            <Label htmlFor="week-select" className="text-xs text-muted-foreground">
+          <div className="flex min-w-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+            <Label htmlFor="week-select" className="shrink-0 text-xs text-muted-foreground">
               Tuần
             </Label>
             <Select value={selectedWeek} onValueChange={setActiveWeek}>
-              <SelectTrigger id="week-select" className="w-full min-w-[220px]">
+              <SelectTrigger id="week-select" className="w-full min-w-0 sm:max-w-xs">
                 <SelectValue>{formatWeekRange(selectedWeek)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -51,7 +51,7 @@ export function AttendancePageHeader() {
           </div>
         )}
       </div>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
         <ClearAttendanceDataButton />
         <CreateWeekDialog
           onCreateWeek={createWeek}

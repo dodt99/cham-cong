@@ -51,7 +51,7 @@ function ShiftSelectInner({
     [variant],
   );
   const selectedShift = value ? getShiftByCode(value) : undefined;
-  const triggerClassName = cn(className ?? "w-[200px]");
+  const triggerClassName = cn(className ?? "w-full min-w-0 sm:w-[200px]");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

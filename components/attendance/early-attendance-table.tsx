@@ -27,14 +27,14 @@ export function EarlyAttendanceTable() {
   const rows = buildEarlyAttendanceRows(sheet);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
           Thanh toán làm sớm
         </p>
         <EarlyExportExcelButton />
       </div>
-      <div className="rounded-md border">
+      <div className="min-w-0 max-w-full rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>

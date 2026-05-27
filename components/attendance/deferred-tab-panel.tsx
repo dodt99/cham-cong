@@ -40,7 +40,7 @@ export function DeferredTabPanel({
 
 export function AttendanceTableSkeleton() {
   return (
-    <div className="flex min-h-[480px] animate-pulse flex-col gap-3 rounded-md border bg-muted/20 p-4">
+    <div className="flex min-h-[480px] min-w-0 animate-pulse flex-col gap-3 rounded-md border bg-muted/20 p-4">
       <div className="h-8 w-full max-w-md rounded bg-muted" />
       <div className="flex-1 space-y-2">
         {Array.from({ length: 8 }).map((_, i) => (

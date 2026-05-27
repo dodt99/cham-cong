@@ -20,7 +20,7 @@ export function WeekdayAttendanceTable() {
   if (!weekStart) return null;
 
   return (
-    <div className="rounded-md border">
+    <div className="min-w-0 max-w-full rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>

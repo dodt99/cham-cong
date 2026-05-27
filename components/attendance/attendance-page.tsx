@@ -16,9 +16,9 @@ export function AttendancePage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[100%] flex-col gap-6 p-4 sm:p-6 lg:p-8">
+    <main className="mx-auto flex w-full min-w-0 max-w-full flex-col gap-4 p-4 sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
       <AttendancePageHeader />
       <AttendanceSectionTabs />
-    </div>
+    </main>
   );
 }

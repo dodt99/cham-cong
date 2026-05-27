@@ -80,13 +80,15 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
           {assignments.map((assignment) => (
             <li
               key={assignment.employeeId}
-              className="flex items-center gap-2 rounded-md border bg-background p-2"
+              className="relative flex flex-col gap-2 rounded-md border bg-background p-2 sm:flex-row sm:items-center"
             >
-              <span className="min-w-[140px] flex-1 min-w-0 text-sm font-medium">
+              <span className="min-w-0 flex-1 text-sm font-medium">
                 <span className="font-mono text-xs text-muted-foreground">
                   {assignment.employeeId}
                 </span>
-                <span className="ml-2">{getEmployeeName(assignment.employeeId)}</span>
+                <span className="ml-2 break-words">
+                  {getEmployeeName(assignment.employeeId)}
+                </span>
               </span>
               <WorkLocationSelect
                 variant="evening"
@@ -94,7 +96,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
                 onChange={(key) =>
                   setEveningLocation(assignment.employeeId, day, key)
                 }
-                className="w-[200px]"
+                className="w-full shrink-0 sm:w-[200px]"
               />
               <Button
                 type="button"
@@ -104,6 +106,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
                 onClick={() =>
                   setExtraEvening(assignment.employeeId, day, false)
                 }
+                className="absolute right-0 top-0 sm:static"
               >
                 <Trash2 className="size-4" />
               </Button>
@@ -112,8 +115,8 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
         </ul>
       )}
 
-      <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-dashed pt-3">
-        <div className="grid min-w-[220px] gap-1">
+      <div className="mt-4 flex flex-col gap-2 border-t border-dashed pt-3 sm:flex-row sm:flex-wrap sm:items-end">
+        <div className="grid w-full min-w-0 gap-1 sm:min-w-[12rem] sm:flex-1 sm:max-w-xs">
           {/* <Label htmlFor={`evening-add-${day}`} className="text-xs">
             Thêm nhân viên
           </Label> */}
@@ -126,11 +129,12 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
             disabled={availableEmployees.length === 0}
           />
         </div>
-        <div className="grid gap-1">
+        <div className="grid w-full min-w-0 gap-1 sm:w-auto sm:min-w-[12rem]">
           <WorkLocationSelect
             variant="evening"
             value={pendingLocationKey}
             onChange={setPendingLocationKey}
+            className="w-full sm:w-[200px]"
           />
         </div>
         <Button
