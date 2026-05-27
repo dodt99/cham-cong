@@ -4,8 +4,6 @@ import { memo } from "react";
 
 import { ShiftSelect } from "@/components/attendance/shift-select";
 import { WorkLocationSelect } from "@/components/attendance/work-location-select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { selectEmployeeRow } from "@/lib/attendance/selectors";
 import { EMPLOYEES } from "@/lib/constants/employees";
@@ -16,14 +14,12 @@ type AttendanceEmployeeRowProps = {
   employeeId: string;
   dayKeys?: readonly DayKey[];
   showDefaultColumn?: boolean;
-  showEvening?: boolean;
 };
 
 function AttendanceEmployeeRowInner({
   employeeId,
   dayKeys = DAY_KEYS,
   showDefaultColumn = true,
-  showEvening = true,
 }: AttendanceEmployeeRowProps) {
   const row = useAttendanceZustandStore(selectEmployeeRow(employeeId));
   const setDefaultShift = useAttendanceZustandStore((s) => s.setDefaultShift);
@@ -32,10 +28,6 @@ function AttendanceEmployeeRowInner({
   );
   const setDayShift = useAttendanceZustandStore((s) => s.setDayShift);
   const setDayLocation = useAttendanceZustandStore((s) => s.setDayLocation);
-  const setExtraEvening = useAttendanceZustandStore((s) => s.setExtraEvening);
-  const setEveningLocation = useAttendanceZustandStore(
-    (s) => s.setEveningLocation,
-  );
 
   const employee = EMPLOYEES.find((e) => e.id === employeeId);
   if (!employee || !row) return null;
@@ -55,13 +47,11 @@ function AttendanceEmployeeRowInner({
               variant="default"
               value={row.defaultShiftCode}
               onChange={(code) => setDefaultShift(employeeId, code)}
-              placeholder="Ca mặc định"
               className="w-full min-w-[150px]"
             />
             <WorkLocationSelect
               value={row.defaultLocationKey}
               onChange={(key) => setDefaultLocation(employeeId, key)}
-              placeholder="Địa điểm mặc định"
               className="w-full min-w-[150px]"
             />
           </div>
@@ -87,35 +77,6 @@ function AttendanceEmployeeRowInner({
                 disabled={dayEntry.shiftCode === null}
                 className="w-full min-w-[150px] max-w-[250px]"
               />
-              {showEvening && !isWeekend && (
-                <div className="flex flex-row gap-2">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id={`${employeeId}-${day}-evening`}
-                      checked={dayEntry.extraEvening}
-                      onCheckedChange={(checked) =>
-                        setExtraEvening(employeeId, day, checked === true)
-                      }
-                    />
-                    <Label
-                      htmlFor={`${employeeId}-${day}-evening`}
-                      className="cursor-pointer text-xs font-normal whitespace-nowrap"
-                    >
-                      Tối
-                    </Label>
-                  </div>
-                  <WorkLocationSelect
-                    variant="evening"
-                    value={dayEntry.eveningLocationKey}
-                    onChange={(key) =>
-                      setEveningLocation(employeeId, day, key)
-                    }
-                    disabled={!dayEntry.extraEvening}
-                    placeholder="Địa điểm tối"
-                    className="w-full min-w-[150px]"
-                  />
-                </div>
-              )}
             </div>
           </TableCell>
         );

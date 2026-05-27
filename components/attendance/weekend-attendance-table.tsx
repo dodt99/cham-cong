@@ -44,7 +44,6 @@ export function WeekendAttendanceTable() {
               employeeId={employee.id}
               dayKeys={WEEKEND_DAY_KEYS}
               showDefaultColumn={false}
-              showEvening={false}
             />
           ))}
         </TableBody>

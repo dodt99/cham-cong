@@ -2,16 +2,10 @@
 
 import { useMemo, useState } from "react";
 
+import { EmployeeSelect } from "@/components/attendance/employee-select";
 import { WorkLocationSelect } from "@/components/attendance/work-location-select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   EMPTY_EVENING_ASSIGNMENTS,
   buildEveningAssignments,
@@ -21,8 +15,6 @@ import type { DayKey } from "@/lib/types/attendance";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 import { formatDayHeader } from "@/lib/utils/week";
 import { Trash2 } from "lucide-react";
-
-const EMPTY_EMPLOYEE_VALUE = "__empty_employee__";
 
 type EveningDaySectionProps = {
   weekStart: string;
@@ -43,8 +35,8 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   const setEveningLocation = useAttendanceZustandStore(
     (s) => s.setEveningLocation,
   );
-  const [pendingEmployeeId, setPendingEmployeeId] = useState(
-    EMPTY_EMPLOYEE_VALUE,
+  const [pendingEmployeeId, setPendingEmployeeId] = useState<string | null>(
+    null,
   );
   const [pendingLocationKey, setPendingLocationKey] = useState<string | null>(
     null,
@@ -61,12 +53,12 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
   );
 
   const handleAdd = () => {
-    if (pendingEmployeeId === EMPTY_EMPLOYEE_VALUE) return;
+    if (!pendingEmployeeId) return;
     setExtraEvening(pendingEmployeeId, day, true);
     if (pendingLocationKey) {
       setEveningLocation(pendingEmployeeId, day, pendingLocationKey);
     }
-    setPendingEmployeeId(EMPTY_EMPLOYEE_VALUE);
+    setPendingEmployeeId(null);
     setPendingLocationKey(null);
   };
 
@@ -102,7 +94,6 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
                 onChange={(key) =>
                   setEveningLocation(assignment.employeeId, day, key)
                 }
-                placeholder="Vị trí ca tối"
                 className="w-[200px]"
               />
               <Button
@@ -123,48 +114,30 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
 
       <div className="mt-4 flex flex-wrap items-end gap-2 border-t border-dashed pt-3">
         <div className="grid min-w-[220px] gap-1">
-          <Label htmlFor={`evening-add-${day}`} className="text-xs">
+          {/* <Label htmlFor={`evening-add-${day}`} className="text-xs">
             Thêm nhân viên
-          </Label>
-          <Select
+          </Label> */}
+          <EmployeeSelect
+            id={`evening-add-${day}`}
             value={pendingEmployeeId}
-            onValueChange={setPendingEmployeeId}
-          >
-            <SelectTrigger id={`evening-add-${day}`} className="w-full">
-              <SelectValue placeholder="Chọn nhân viên" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={EMPTY_EMPLOYEE_VALUE}>
-                <span className="text-muted-foreground">-</span>
-              </SelectItem>
-              {availableEmployees.map((employee) => (
-                <SelectItem key={employee.id} value={employee.id}>
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {employee.id}
-                  </span>
-                  <span className="ml-2">{employee.fullName}</span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            onChange={setPendingEmployeeId}
+            employees={availableEmployees}
+            className="w-full"
+            disabled={availableEmployees.length === 0}
+          />
         </div>
         <div className="grid gap-1">
-          <Label className="text-xs">Vị trí</Label>
           <WorkLocationSelect
             variant="evening"
             value={pendingLocationKey}
             onChange={setPendingLocationKey}
-            placeholder="Vị trí"
           />
         </div>
         <Button
           type="button"
           variant="secondary"
           onClick={handleAdd}
-          disabled={
-            pendingEmployeeId === EMPTY_EMPLOYEE_VALUE ||
-            availableEmployees.length === 0
-          }
+          disabled={!pendingEmployeeId || availableEmployees.length === 0}
         >
           Thêm
         </Button>

@@ -2,12 +2,7 @@
 
 import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
-import {
-  getWorkLocationByKey,
-  getWorkLocationsForVariant,
-  type WorkLocation,
-  type WorkLocationSelectVariant,
-} from "@/lib/constants/work-locations";
+import type { Employee } from "@/lib/constants/employees";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -24,39 +19,40 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
-function locationCommandValue(loc: WorkLocation): string {
-  return `${loc.code} ${loc.name} ${loc.block}`;
+function employeeCommandValue(employee: Employee): string {
+  return `${employee.id} ${employee.fullName}`;
 }
 
-type WorkLocationSelectProps = {
+type EmployeeSelectProps = {
   value: string | null;
-  onChange: (key: string | null) => void;
+  onChange: (employeeId: string | null) => void;
+  employees: Employee[];
   placeholder?: string;
   className?: string;
   disabled?: boolean;
-  variant?: WorkLocationSelectVariant;
-  locations?: WorkLocation[];
+  id?: string;
 };
 
-export function WorkLocationSelect({
+export function EmployeeSelect({
   value,
   onChange,
-  placeholder = "Địa điểm",
+  employees,
+  placeholder = "Chọn nhân viên",
   className,
   disabled = false,
-  variant = "default",
-  locations,
-}: WorkLocationSelectProps) {
+  id,
+}: EmployeeSelectProps) {
   const [open, setOpen] = useState(false);
-  const resolvedLocations =
-    locations ?? getWorkLocationsForVariant(variant);
-  const selectedLocation = value ? getWorkLocationByKey(value) : undefined;
-  const triggerClassName = cn(className ?? "w-[200px]");
+  const selectedEmployee = value
+    ? employees.find((e) => e.id === value)
+    : undefined;
+  const triggerClassName = cn(className ?? "w-full");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
+          id={id}
           variant="outline"
           role="combobox"
           aria-expanded={open}
@@ -64,16 +60,16 @@ export function WorkLocationSelect({
           className={cn(
             "h-9 justify-between px-3 font-normal shadow-sm",
             triggerClassName,
-            !selectedLocation && "text-muted-foreground",
+            !selectedEmployee && "text-muted-foreground",
           )}
         >
           <span className="truncate">
-            {selectedLocation ? (
+            {selectedEmployee ? (
               <>
                 <span className="font-mono text-xs text-muted-foreground">
-                  {selectedLocation.code}
+                  {selectedEmployee.id}
                 </span>
-                <span className="ml-2">{selectedLocation.name}</span>
+                <span className="ml-2">{selectedEmployee.fullName}</span>
               </>
             ) : (
               placeholder
@@ -87,9 +83,9 @@ export function WorkLocationSelect({
         align="start"
       >
         <Command>
-          <CommandInput placeholder="Tìm mã, tên, tầng..." />
+          <CommandInput placeholder="Tìm mã, tên nhân viên..." />
           <CommandList className="max-h-[min(24rem,70vh)]">
-            <CommandEmpty>Không tìm thấy địa điểm</CommandEmpty>
+            <CommandEmpty>Không tìm thấy nhân viên</CommandEmpty>
             <CommandGroup>
               <CommandItem
                 value="- trống"
@@ -106,26 +102,25 @@ export function WorkLocationSelect({
                 />
                 <span className="text-muted-foreground">-</span>
               </CommandItem>
-              {resolvedLocations.map((loc) => (
+              {employees.map((employee) => (
                 <CommandItem
-                  key={loc.key}
-                  value={locationCommandValue(loc)}
-                  title={`${loc.name} · ${loc.code}`}
+                  key={employee.id}
+                  value={employeeCommandValue(employee)}
                   onSelect={() => {
-                    onChange(loc.key);
+                    onChange(employee.id);
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
                       "h-4 w-4",
-                      value === loc.key ? "opacity-100" : "opacity-0",
+                      value === employee.id ? "opacity-100" : "opacity-0",
                     )}
                   />
                   <span className="font-mono text-xs text-muted-foreground">
-                    {loc.code}
+                    {employee.id}
                   </span>
-                  <span className="ml-2">{loc.name}</span>
+                  <span className="ml-2">{employee.fullName}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
