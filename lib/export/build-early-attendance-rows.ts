@@ -30,6 +30,7 @@ export type EarlyAttendanceRow = {
 };
 
 const WEEKDAY_KEYS = DAY_KEYS.slice(0, 5);
+const EARLY_EXCLUDED_SHIFT_CODES = new Set(["K18"]);
 
 function getEarlyAssignedEnd(
   shiftCode: string,
@@ -64,6 +65,7 @@ export function buildEarlyAttendanceRows(
     for (const day of WEEKDAY_KEYS) {
       const entry = weekRow.days[day];
       if (entry.shiftCode === null) continue;
+      if (EARLY_EXCLUDED_SHIFT_CODES.has(entry.shiftCode)) continue;
 
       const shift = getShiftByCode(entry.shiftCode);
 
@@ -92,6 +94,7 @@ export function buildEarlyRowsForEmployeeDay(
   locationKey: string | null,
 ): EarlyAttendanceRow | null {
   if (shiftCode === null) return null;
+  if (EARLY_EXCLUDED_SHIFT_CODES.has(shiftCode)) return null;
 
   const employee = EMPLOYEES.find((e) => e.id === employeeId);
   if (!employee) return null;

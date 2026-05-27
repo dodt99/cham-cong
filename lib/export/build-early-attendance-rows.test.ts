@@ -84,6 +84,20 @@ describe("buildEarlyAttendanceRows", () => {
     expect(rows[0].workDate).toBe("2026-05-18");
   });
 
+  it("excludes shift K18 from early attendance", () => {
+    const firstId = EMPLOYEES[0].id;
+    const sheet = makeSheet({
+      [firstId]: makeRow({
+        mon: { shiftCode: "K18", locationKey: LOC_TANG1 },
+      }),
+    });
+
+    const rows = buildEarlyAttendanceRows(sheet).filter(
+      (r) => r.employeeId === firstId,
+    );
+    expect(rows).toHaveLength(0);
+  });
+
   it("includes afternoon-off shifts with note in job title", () => {
     const firstId = EMPLOYEES[0].id;
     const sheet = makeSheet({
