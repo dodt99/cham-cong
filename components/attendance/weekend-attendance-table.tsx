@@ -41,7 +41,7 @@ export function WeekendAttendanceTable() {
           {EMPLOYEES.map((employee) => (
             <AttendanceEmployeeRow
               key={employee.id}
-              employeeId={employee.id}
+              employee={employee}
               dayKeys={WEEKEND_DAY_KEYS}
               showDefaultColumn={false}
             />

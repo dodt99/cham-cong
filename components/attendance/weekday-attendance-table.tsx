@@ -42,7 +42,7 @@ export function WeekdayAttendanceTable() {
           {EMPLOYEES.map((employee) => (
             <AttendanceEmployeeRow
               key={employee.id}
-              employeeId={employee.id}
+              employee={employee}
               dayKeys={WEEKDAY_DAY_KEYS}
               showDefaultColumn
             />

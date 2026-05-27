@@ -82,7 +82,7 @@ export function EmployeeSelect({
         className={cn("p-0", triggerClassName)}
         align="start"
       >
-        <Command>
+        {open ? <Command>
           <CommandInput placeholder="Tìm mã, tên nhân viên..." />
           <CommandList className="max-h-[min(24rem,70vh)]">
             <CommandEmpty>Không tìm thấy nhân viên</CommandEmpty>
@@ -125,7 +125,7 @@ export function EmployeeSelect({
               ))}
             </CommandGroup>
           </CommandList>
-        </Command>
+        </Command> : null}
       </PopoverContent>
     </Popover>
   );

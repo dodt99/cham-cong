@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
   getWorkLocationByKey,
@@ -38,7 +38,7 @@ type WorkLocationSelectProps = {
   locations?: WorkLocation[];
 };
 
-export function WorkLocationSelect({
+function WorkLocationSelectInner({
   value,
   onChange,
   placeholder = "Địa điểm",
@@ -48,8 +48,10 @@ export function WorkLocationSelect({
   locations,
 }: WorkLocationSelectProps) {
   const [open, setOpen] = useState(false);
-  const resolvedLocations =
-    locations ?? getWorkLocationsForVariant(variant);
+  const resolvedLocations = useMemo(
+    () => locations ?? getWorkLocationsForVariant(variant),
+    [locations, variant],
+  );
   const selectedLocation = value ? getWorkLocationByKey(value) : undefined;
   const triggerClassName = cn(className ?? "w-[200px]");
 
@@ -86,52 +88,56 @@ export function WorkLocationSelect({
         className={cn("p-0", triggerClassName)}
         align="start"
       >
-        <Command>
-          <CommandInput placeholder="Tìm mã, tên, tầng..." />
-          <CommandList className="max-h-[min(24rem,70vh)]">
-            <CommandEmpty>Không tìm thấy địa điểm</CommandEmpty>
-            <CommandGroup>
-              <CommandItem
-                value="- trống"
-                onSelect={() => {
-                  onChange(null);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "h-4 w-4",
-                    value === null ? "opacity-100" : "opacity-0",
-                  )}
-                />
-                <span className="text-muted-foreground">-</span>
-              </CommandItem>
-              {resolvedLocations.map((loc) => (
+        {open ? (
+          <Command>
+            <CommandInput placeholder="Tìm mã, tên, tầng..." />
+            <CommandList className="max-h-[min(24rem,70vh)]">
+              <CommandEmpty>Không tìm thấy địa điểm</CommandEmpty>
+              <CommandGroup>
                 <CommandItem
-                  key={loc.key}
-                  value={locationCommandValue(loc)}
-                  title={`${loc.name} · ${loc.code}`}
+                  value="- trống"
                   onSelect={() => {
-                    onChange(loc.key);
+                    onChange(null);
                     setOpen(false);
                   }}
                 >
                   <Check
                     className={cn(
                       "h-4 w-4",
-                      value === loc.key ? "opacity-100" : "opacity-0",
+                      value === null ? "opacity-100" : "opacity-0",
                     )}
                   />
-                  <span className="font-mono text-xs text-muted-foreground">
-                    {loc.code}
-                  </span>
-                  <span className="ml-2">{loc.name}</span>
+                  <span className="text-muted-foreground">-</span>
                 </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+                {resolvedLocations.map((loc) => (
+                  <CommandItem
+                    key={loc.key}
+                    value={locationCommandValue(loc)}
+                    title={`${loc.name} · ${loc.code}`}
+                    onSelect={() => {
+                      onChange(loc.key);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "h-4 w-4",
+                        value === loc.key ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {loc.code}
+                    </span>
+                    <span className="ml-2">{loc.name}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        ) : null}
       </PopoverContent>
     </Popover>
   );
 }
+
+export const WorkLocationSelect = memo(WorkLocationSelectInner);

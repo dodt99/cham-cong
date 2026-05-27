@@ -1,6 +1,12 @@
 "use client";
 
+import { useState, useTransition } from "react";
+
 import { EarlyAttendanceTable } from "@/components/attendance/early-attendance-table";
+import {
+  AttendanceTableSkeleton,
+  DeferredTabPanel,
+} from "@/components/attendance/deferred-tab-panel";
 import { EveningExportAttendanceTable } from "@/components/attendance/evening-export-attendance-table";
 import { WeekendExportAttendanceTable } from "@/components/attendance/weekend-export-attendance-table";
 import { EveningTabContent } from "@/components/attendance/evening-tab-content";
@@ -11,8 +17,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { selectHasActiveSheet } from "@/lib/attendance/selectors";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
+const DEFAULT_TAB = "weekday";
+
 export function AttendanceSectionTabs() {
   const hasActiveSheet = useAttendanceZustandStore(selectHasActiveSheet);
+  const [selectedTab, setSelectedTab] = useState(DEFAULT_TAB);
+  const [renderedTab, setRenderedTab] = useState(DEFAULT_TAB);
+  const [isPending, startTransition] = useTransition();
+
+  const handleTabChange = (value: string) => {
+    setSelectedTab(value);
+    startTransition(() => {
+      setRenderedTab(value);
+    });
+  };
 
   if (!hasActiveSheet) {
     return (
@@ -27,7 +45,11 @@ export function AttendanceSectionTabs() {
   }
 
   return (
-    <Tabs defaultValue="weekday" className="w-full">
+    <Tabs
+      value={selectedTab}
+      onValueChange={handleTabChange}
+      className="w-full"
+    >
       <TabsList className="mb-4 h-auto flex-wrap">
         <TabsTrigger value="weekday">Ngày thường</TabsTrigger>
         <TabsTrigger value="evening">Tối</TabsTrigger>
@@ -39,7 +61,15 @@ export function AttendanceSectionTabs() {
       </TabsList>
 
       <TabsContent value="weekday" className="overflow-x-auto">
-        <WeekdayAttendanceTable />
+        <DeferredTabPanel
+          tabValue="weekday"
+          fallback={<AttendanceTableSkeleton />}
+          selectedTab={selectedTab}
+          renderedTab={renderedTab}
+          isPending={isPending}
+        >
+          <WeekdayAttendanceTable />
+        </DeferredTabPanel>
       </TabsContent>
 
       <TabsContent value="weekend" className="overflow-x-auto">

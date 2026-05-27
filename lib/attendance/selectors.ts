@@ -29,3 +29,14 @@ export const selectDayEntry =
   (employeeId: string, day: DayKey) =>
   (s: AttendanceState): DayEntry | undefined =>
     selectEmployeeRow(employeeId)(s)?.days[day];
+
+export const selectEmployeeDefaults =
+  (employeeId: string) =>
+  (s: AttendanceState) => {
+    const row = selectEmployeeRow(employeeId)(s);
+    if (!row) return undefined;
+    return {
+      defaultShiftCode: row.defaultShiftCode,
+      defaultLocationKey: row.defaultLocationKey,
+    };
+  };
