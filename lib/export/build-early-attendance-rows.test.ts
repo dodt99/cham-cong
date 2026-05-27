@@ -17,8 +17,8 @@ import {
 import { describe, expect, it } from "vitest";
 
 const WEEK_START = "2026-05-18";
-const LOC_TANG1 = "K1.1TD#0";
-const LOC_HAM = "K1.BTD#24";
+const LOC_TANG1 = "K1.1TD#NORMAL";
+const LOC_HAM = "K1.BTD#NORMAL";
 
 type DayInput = {
   shiftCode: string | null;

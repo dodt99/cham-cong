@@ -81,6 +81,7 @@ function AttendanceEmployeeRowInner({
                 className="w-full min-w-[150px] max-w-[250px]"
               />
               <WorkLocationSelect
+                variant={isWeekend ? "weekend" : "default"}
                 value={dayEntry.locationKey}
                 onChange={(key) => setDayLocation(employeeId, day, key)}
                 disabled={dayEntry.shiftCode === null}
@@ -104,6 +105,7 @@ function AttendanceEmployeeRowInner({
                     </Label>
                   </div>
                   <WorkLocationSelect
+                    variant="evening"
                     value={dayEntry.eveningLocationKey}
                     onChange={(key) =>
                       setEveningLocation(employeeId, day, key)

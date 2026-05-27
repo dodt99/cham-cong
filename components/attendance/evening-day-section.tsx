@@ -97,6 +97,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
                 <span className="ml-2">{getEmployeeName(assignment.employeeId)}</span>
               </span>
               <WorkLocationSelect
+                variant="evening"
                 value={assignment.eveningLocationKey}
                 onChange={(key) =>
                   setEveningLocation(assignment.employeeId, day, key)
@@ -150,6 +151,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
         <div className="grid gap-1">
           <Label className="text-xs">Vị trí</Label>
           <WorkLocationSelect
+            variant="evening"
             value={pendingLocationKey}
             onChange={setPendingLocationKey}
             placeholder="Vị trí"

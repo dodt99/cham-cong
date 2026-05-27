@@ -30,10 +30,7 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
       shift("K02", "5h00-16h30", "Ca thường", { h: 5, m: 0 }, { h: 16, m: 30 }),
       shift("K04", "5h30-16h30", "Ca thường", { h: 5, m: 30 }, { h: 16, m: 30 }),
       shift("K07", "6h00-16h30", "Ca thường", { h: 6, m: 0 }, { h: 16, m: 30 }),
-      shift("K10", "7h00-16h30", "Ca thường", { h: 7, m: 0 }, { h: 16, m: 30 }),
-      shift("K11", "7h30-16h30", "Ca thường", { h: 7, m: 30 }, { h: 16, m: 30 }), // Bỏ ?
-      shift("K12", "7h30-17h30", "Ca thường", { h: 7, m: 30 }, { h: 17, m: 30 }), // Bỏ ?
-      // K18 ?
+      shift("K18", "7h30-17h00", "Ca thường", { h: 7, m: 30 }, { h: 17, m: 0 }),
     ],
   },
   {
@@ -45,13 +42,10 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
   {
     label: "Ca T7-CN",
     shifts: [
-      shift("K01", "5h00-14h30", "Ca T7-CN", { h: 5, m: 0 }, { h: 14, m: 30 }),
-      shift("K03", "5h30-15h00", "Ca T7-CN", { h: 5, m: 30 }, { h: 15, m: 0 }),
-      shift("K06", "6h00-15h30", "Ca T7-CN", { h: 6, m: 0 }, { h: 15, m: 30 }),
-      shift("K38", "6h30-16h00", "Ca T7-CN", { h: 6, m: 30 }, { h: 16, m: 0 }), // ?
-      shift("K18", "7h30-17h00", "Ca T7-CN", { h: 7, m: 30 }, { h: 17, m: 0 }), // Bỏ ?
-      shift("K13", "8h00-17h30", "Ca T7-CN", { h: 8, m: 0 }, { h: 17, m: 30 }),
-      shift("K14", "8h30-18h00", "Ca T7-CN", { h: 8, m: 30 }, { h: 18, m: 0 }),
+      shift("K01", "5h00-15h30", "Ca T7-CN", { h: 5, m: 0 }, { h: 15, m: 30 }),
+      shift("K03", "5h30-16h00", "Ca T7-CN", { h: 5, m: 30 }, { h: 16, m: 0 }),
+      shift("K06", "6h00-16h30", "Ca T7-CN", { h: 6, m: 0 }, { h: 16, m: 30 }),
+      shift("K10", "7h00-17h30", "Ca T7-CN", { h: 7, m: 0 }, { h: 17, m: 30 }),
     ],
   },
   {
@@ -60,8 +54,8 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
       shift("K35", "5h00-12h00", "Nghỉ chiều", { h: 5, m: 0 }, { h: 12, m: 0 }),
       shift("K36", "5h30-12h00", "Nghỉ chiều", { h: 5, m: 30 }, { h: 12, m: 0 }),
       shift("K37", "6h00-12h00", "Nghỉ chiều", { h: 6, m: 0 }, { h: 12, m: 0 }),
-      // K38 ?
-      shift("K39", "7h30-12h00", "Nghỉ chiều", { h: 7, m: 30 }, { h: 12, m: 0 }),
+      shift("K39", "7h30-12h00", "Nghỉ chiều", { h: 7, m: 30 }, { h: 12, m: 0 }
+      ),
     ],
   },
 ];

@@ -15,9 +15,9 @@ import {
 
 const WEEK_START = "2026-05-18";
 
-const LOC_TANG1 = "K1.1TD#0";
-const LOC_SIEU_AM = "K1.2TDSA#1";
-const LOC_CA_TOI_T3 = "K1.P321#8";
+const LOC_TANG1 = "K1.1TD#NORMAL";
+const LOC_SIEU_AM = "K1.2TDSA#NORMAL";
+const LOC_CA_TOI_T3 = "K1.P321#EVENING";
 
 /** Default weekend when tests only set T2–T6 (one row per day) */
 const SAT_OFF = { from: "2026-05-23", to: "2026-05-23", shift: OFF_LABEL };
