@@ -63,8 +63,7 @@ export function CreateWeekDialog({
         <DialogHeader>
           <DialogTitle>Tạo bảng chấm công</DialogTitle>
           <DialogDescription>
-            Chọn tuần cần chấm công. Mỗi tuần là một bảng riêng, lưu trên
-            trình duyệt của bạn.
+            {/* Chọn tuần cần chấm công. */}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-2 py-2">
@@ -92,7 +91,11 @@ export function CreateWeekDialog({
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} className="mt-1 sm:mt-0">
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            className="mt-1 sm:mt-0"
+          >
             Hủy
           </Button>
           <Button onClick={handleConfirm}>Tạo bảng</Button>
