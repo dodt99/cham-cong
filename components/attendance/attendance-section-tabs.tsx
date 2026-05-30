@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { EarlyAttendanceTable } from "@/components/attendance/early-attendance-table";
@@ -19,23 +20,49 @@ import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
 const DEFAULT_TAB = "weekday";
 
-const getDefaultTab = () => {
-  return localStorage.getItem("attendance-default-tab") || DEFAULT_TAB;
-};
+const ATTENDANCE_TABS = [
+  "weekday",
+  "evening",
+  "weekend",
+  "export-fast",
+  "export-early",
+  "export-evening",
+  "export-weekend",
+] as const;
 
-const saveDefaultTab = (tab: string) => {
-  localStorage.setItem("attendance-default-tab", tab);
+type AttendanceTab = (typeof ATTENDANCE_TABS)[number];
+
+const isAttendanceTab = (value: string | null): value is AttendanceTab =>
+  value !== null && (ATTENDANCE_TABS as readonly string[]).includes(value);
+
+const tabFromSearchParams = (searchParams: URLSearchParams): AttendanceTab => {
+  const param = searchParams.get("tab");
+  return isAttendanceTab(param) ? param : DEFAULT_TAB;
 };
 
 export function AttendanceSectionTabs() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const hasActiveSheet = useAttendanceZustandStore(selectHasActiveSheet);
-  const [selectedTab, setSelectedTab] = useState(getDefaultTab());
-  const [renderedTab, setRenderedTab] = useState(getDefaultTab());
+  const selectedTab = tabFromSearchParams(searchParams);
+  const [renderedTab, setRenderedTab] = useState(selectedTab);
   const [isPending, startTransition] = useTransition();
+  const deferredRenderedTab = isPending ? renderedTab : selectedTab;
 
   const handleTabChange = (value: string) => {
-    saveDefaultTab(value);
-    setSelectedTab(value);
+    if (!isAttendanceTab(value)) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === DEFAULT_TAB) {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+
+    setRenderedTab(selectedTab);
     startTransition(() => {
       setRenderedTab(value);
     });
@@ -73,7 +100,7 @@ export function AttendanceSectionTabs() {
           tabValue="weekday"
           fallback={<AttendanceTableSkeleton />}
           selectedTab={selectedTab}
-          renderedTab={renderedTab}
+          renderedTab={deferredRenderedTab}
           isPending={isPending}
         >
           <WeekdayAttendanceTable />

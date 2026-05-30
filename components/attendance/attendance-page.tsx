@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { AttendancePageHeader } from "@/components/attendance/attendance-page-header";
 import { AttendanceSectionTabs } from "@/components/attendance/attendance-section-tabs";
 import { Button } from "@/components/ui/button";
@@ -33,7 +35,9 @@ export function AttendancePage() {
   return (
     <main className="mx-auto flex w-full min-w-0 max-w-full flex-col gap-4 p-4 sm:gap-6 sm:p-6 lg:gap-8 lg:p-8">
       <AttendancePageHeader />
-      <AttendanceSectionTabs />
+      <Suspense fallback={<div className="min-h-80 animate-pulse rounded-lg bg-muted/40" />}>
+        <AttendanceSectionTabs />
+      </Suspense>
     </main>
   );
 }
