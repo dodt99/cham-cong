@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation";
-
-import { DEFAULT_ATTENDANCE_ROUTE } from "@/lib/constants/attendance-routes";
+import { AttendancePage } from "@/components/attendance/attendance-page";
 
 export default function Home() {
-  redirect(DEFAULT_ATTENDANCE_ROUTE);
+  return <AttendancePage />;
 }
