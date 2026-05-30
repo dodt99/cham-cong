@@ -12,6 +12,7 @@ import {
   WEEKEND_UNIT,
 } from "@/lib/export/weekend-constants";
 import { getDayDate } from "@/lib/utils/week";
+import { getWeekendWorkLocationPriority } from "../constants/work-locations";
 
 function updateWeekendSheetTitle(
   sheet: import("exceljs").Worksheet,
@@ -89,8 +90,8 @@ export async function fillAndDownloadWeekendAttendanceExcel(
     formatWeekendSheetTitle("sun", sunDate),
   );
 
-  const satRows = exportRows.filter((r) => r.dayKey === "sat");
-  const sunRows = exportRows.filter((r) => r.dayKey === "sun");
+  const satRows = exportRows.filter((r) => r.dayKey === "sat").sort((a, b) => getWeekendWorkLocationPriority(a.locationBlock) - getWeekendWorkLocationPriority(b.locationBlock));
+  const sunRows = exportRows.filter((r) => r.dayKey === "sun").sort((a, b) => getWeekendWorkLocationPriority(a.locationBlock) - getWeekendWorkLocationPriority(b.locationBlock));
 
   fillWeekendSheetRows(satSheet, satRows);
   fillWeekendSheetRows(sunSheet, sunRows);

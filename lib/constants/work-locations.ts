@@ -127,7 +127,12 @@ export function getWorkLocationBlock(key: string | null): string | null {
   return getWorkLocationByKey(key)?.block ?? null;
 }
 
-export function getWorkLocationPriority(block: string | null): number {
+export function getEveningWorkLocationPriority(block: string | null): number {
   if (!block) return Infinity;
   return EVENING_WORK_LOCATIONS.findIndex((loc) => loc.block === block) + 1 || Infinity;
+}
+
+export function getWeekendWorkLocationPriority(block: string | null): number {
+  if (!block) return Infinity;
+  return WEEKEND_WORK_LOCATIONS.findIndex((loc) => loc.block === block) + 1 || Infinity;
 }

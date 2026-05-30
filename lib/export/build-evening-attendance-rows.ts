@@ -1,7 +1,7 @@
 import { WEEKDAY_DAY_KEYS } from "@/lib/attendance/evening-selectors";
 import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import { getShiftByCode, type ShiftTime } from "@/lib/constants/shifts";
-import { getWorkLocationBlock, getWorkLocationPriority } from "@/lib/constants/work-locations";
+import { getWorkLocationBlock, getEveningWorkLocationPriority } from "@/lib/constants/work-locations";
 import { EVENING_SHIFT_CODE } from "@/lib/export/constants";
 import {
   EVENING_JOB_DESCRIPTION,
@@ -60,7 +60,7 @@ export function buildEveningAttendanceRows(
       });
     }
 
-    weekDayRows.sort((a, b) => getWorkLocationPriority(a.locationBlock) - getWorkLocationPriority(b.locationBlock));
+    weekDayRows.sort((a, b) => getEveningWorkLocationPriority(a.locationBlock) - getEveningWorkLocationPriority(b.locationBlock));
 
     rows.push(...weekDayRows);
   }
