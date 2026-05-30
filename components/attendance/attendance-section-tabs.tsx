@@ -34,7 +34,7 @@ export function AttendanceSectionTabs() {
 
   if (!hasActiveSheet) {
     return (
-      <div className="flex min-h-[320px] min-w-0 flex-col items-center justify-center rounded-lg border border-dashed bg-muted/30 p-4 text-center sm:p-8">
+      <div className="flex min-h-80 min-w-0 flex-col items-center justify-center rounded-lg border border-dashed bg-muted/30 p-4 text-center sm:p-8">
         <p className="text-lg font-medium">Chưa có bảng chấm công</p>
         <p className="mt-2 max-w-md text-sm text-muted-foreground">
           Bấm &quot;Tạo bảng mới&quot; để chọn tuần và bắt đầu chấm công.

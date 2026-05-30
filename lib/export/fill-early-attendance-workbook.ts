@@ -14,7 +14,7 @@ import {
 
 function updateEarlyWeekHeader(
   sheet: import("exceljs").Worksheet,
-  weekStart: string,
+  weekStart: string
 ): void {
   const label = formatEarlyWeekHeader(weekStart);
   const cell = sheet.getRow(EARLY_HEADER_ROW).getCell(1);
@@ -23,7 +23,7 @@ function updateEarlyWeekHeader(
 
 export async function fillAndDownloadEarlyAttendanceExcel(
   exportRows: EarlyAttendanceRow[],
-  weekStart: string,
+  weekStart: string
 ): Promise<void> {
   const ExcelJS = (await import("exceljs")).default;
 
@@ -52,15 +52,15 @@ export async function fillAndDownloadEarlyAttendanceExcel(
     workDateCell.value = toExcelDateValue(row.workDate);
     workDateCell.numFmt = EXCEL_DATE_NUM_FMT;
 
+    excelRow.getCell(5).value = row.jobPosition;
+
     if (row.assignedStart) {
       const startCell = excelRow.getCell(8);
       startCell.value = toExcelTimeValue(row.assignedStart);
       startCell.numFmt = EXCEL_TIME_NUM_FMT;
     }
     const endCell = excelRow.getCell(9);
-    endCell.value = row.assignedEnd
-      ? toExcelTimeValue(row.assignedEnd)
-      : null;
+    endCell.value = row.assignedEnd ? toExcelTimeValue(row.assignedEnd) : null;
     if (row.assignedEnd) {
       endCell.numFmt = EXCEL_TIME_NUM_FMT;
     }
@@ -72,6 +72,10 @@ export async function fillAndDownloadEarlyAttendanceExcel(
     }
 
     excelRow.getCell(14).value = row.taxCode;
+
+    if (row.note) {
+      excelRow.getCell(16).value = row.note;
+    }
 
     excelRow.commit();
     rowNum += 1;

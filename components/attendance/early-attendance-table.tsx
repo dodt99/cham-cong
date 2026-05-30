@@ -29,9 +29,7 @@ export function EarlyAttendanceTable() {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-muted-foreground">
-          Thanh toán làm sớm
-        </p>
+        <p className="text-sm text-muted-foreground">Thanh toán làm sớm</p>
         <EarlyExportExcelButton />
       </div>
       <div className="min-w-0 max-w-full rounded-md border">
@@ -39,21 +37,15 @@ export function EarlyAttendanceTable() {
           <TableHeader>
             <TableRow>
               <TableHead className="min-w-[80px]">Mã NV</TableHead>
-              <TableHead className="min-w-[160px]">Họ và tên</TableHead>
-              <TableHead className="min-w-[100px]">Ngày làm</TableHead>
-              <TableHead className="min-w-[140px]">
-                Bắt đầu ca
-              </TableHead>
-              <TableHead className="min-w-[140px]">
-                Kết thúc ca
-              </TableHead>
-              <TableHead className="min-w-[180px]">
-                Công việc
-              </TableHead>
-              <TableHead className="min-w-[200px]">
-                Địa điểm
-              </TableHead>
+              <TableHead className="min-w-[200px]">Họ và tên</TableHead>
+              <TableHead className="min-w-[120px]">Chức danh</TableHead>
+              <TableHead className="min-w-[150px]">Ngày làm</TableHead>
+              <TableHead className="min-w-[140px]">Bắt đầu ca</TableHead>
+              <TableHead className="min-w-[140px]">Kết thúc ca</TableHead>
+              <TableHead className="min-w-[180px]">Công việc</TableHead>
+              <TableHead className="min-w-[150px]">Địa điểm</TableHead>
               <TableHead className="min-w-[120px]">MST</TableHead>
+              <TableHead className="min-w-[120px]">Ghi chú</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,13 +60,12 @@ export function EarlyAttendanceTable() {
               </TableRow>
             ) : (
               rows.map((row) => (
-                <TableRow
-                  key={`${row.employeeId}-${row.workDate}`}
-                >
+                <TableRow key={`${row.employeeId}-${row.workDate}`}>
                   <TableCell className="font-mono text-xs">
                     {row.employeeId}
                   </TableCell>
                   <TableCell>{row.fullName}</TableCell>
+                  <TableCell>{row.jobPosition}</TableCell>
                   <TableCell className="font-mono text-xs">
                     {formatDateForExport(row.workDate)}
                   </TableCell>
@@ -91,6 +82,7 @@ export function EarlyAttendanceTable() {
                   <TableCell className="font-mono text-xs">
                     {row.taxCode}
                   </TableCell>
+                  <TableCell className="text-xs">{row.note}</TableCell>
                 </TableRow>
               ))
             )}

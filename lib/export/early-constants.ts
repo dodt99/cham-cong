@@ -4,6 +4,10 @@ export const EARLY_DATA_START_ROW = 6;
 
 export const EARLY_HEADER_ROW = 3;
 
+export const EARLY_JOB_POSITION_DEFAULT = "HDV";
+
+export const EARLY_JOB_POSITION_MANAGER = "Chuyên viên";
+
 export const EARLY_JOB_TITLE_DEFAULT = "Hướng dẫn bệnh nhân";
 
 export const EARLY_JOB_TITLE_MANAGER = "Quản lý HDV";
