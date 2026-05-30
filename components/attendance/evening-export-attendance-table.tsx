@@ -45,7 +45,7 @@ export function EveningExportAttendanceTable() {
               <TableHead className="min-w-[100px]">Ngày</TableHead>
               <TableHead className="min-w-[80px]">Mã NV</TableHead>
               <TableHead className="min-w-[160px]">Họ và tên</TableHead>
-              <TableHead className="min-w-[100px]">Chức danh</TableHead>
+              <TableHead className="min-w-[120px]">Chức danh</TableHead>
               <TableHead className="min-w-[140px]">
                 Bắt đầu ca
               </TableHead>
@@ -55,7 +55,7 @@ export function EveningExportAttendanceTable() {
               <TableHead className="min-w-[140px]">
                 Công việc
               </TableHead>
-              <TableHead className="min-w-[200px]">
+              <TableHead className="min-w-[120px]">
                 Block
               </TableHead>
               <TableHead className="min-w-[120px]">MST</TableHead>
