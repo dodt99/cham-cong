@@ -52,11 +52,11 @@ const WORK_LOCATION_ENTRIES: WorkLocationEntry[] = [
   { type: WorkLocationType.NORMAL, name: "7C", code: "K1.703-706", block: "Tầng 7" },
   { type: WorkLocationType.NORMAL, name: "7D", code: "K1.707-712", block: "Tầng 7" },
   // Evening
-  { type: WorkLocationType.EVENING, name: "B1", code: "K1.BTD", block: "Tầng B1" },
   { type: WorkLocationType.EVENING, name: "Siêu âm", code: "K1.2TDSA", block: "Tầng 2" },
   { type: WorkLocationType.EVENING, name: "P321", code: "K1.P321", block: "Tầng 3" },
   { type: WorkLocationType.EVENING, name: "5CD", code: "K1.518523", block: "Tầng 5" },
   { type: WorkLocationType.EVENING, name: "7D", code: "K1.707-712", block: "Tầng 7" },
+  { type: WorkLocationType.EVENING, name: "B1", code: "K1.BTD", block: "Tầng B1" },
   // Weekend
   { type: WorkLocationType.WEEKEND, name: "Tầng 1", code: "K1.1TD", block: "Tầng 1" },
   { type: WorkLocationType.WEEKEND, name: "Siêu âm", code: "K1.2TDSA", block: "Tầng 2" },
@@ -125,4 +125,9 @@ export function getWorkLocationCode(key: string | null): string | null {
 export function getWorkLocationBlock(key: string | null): string | null {
   if (!key) return null;
   return getWorkLocationByKey(key)?.block ?? null;
+}
+
+export function getWorkLocationPriority(block: string | null): number {
+  if (!block) return Infinity;
+  return EVENING_WORK_LOCATIONS.findIndex((loc) => loc.block === block) + 1 || Infinity;
 }
