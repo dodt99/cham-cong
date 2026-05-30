@@ -3,6 +3,12 @@
 import { memo, useMemo, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import {
+  OFF_TYPE_LABELS,
+  OFF_TYPE_OPTIONS,
+  DEFAULT_OFF_TYPE,
+  type OffType,
+} from "@/lib/constants/off-types";
+import {
   getShiftByCode,
   getShiftGroupsForVariant,
   type Shift,
@@ -30,7 +36,8 @@ function shiftCommandValue(shift: Shift): string {
 
 type ShiftSelectProps = {
   value: string | null;
-  onChange: (code: string | null) => void;
+  offType?: OffType | null;
+  onChange: (code: string | null, offType?: OffType | null) => void;
   variant: ShiftSelectVariant;
   placeholder?: string;
   className?: string;
@@ -39,6 +46,7 @@ type ShiftSelectProps = {
 
 function ShiftSelectInner({
   value,
+  offType = null,
   onChange,
   variant,
   placeholder = "Chọn ca",
@@ -51,6 +59,8 @@ function ShiftSelectInner({
     [variant],
   );
   const selectedShift = value ? getShiftByCode(value) : undefined;
+  const resolvedOffType = offType ?? DEFAULT_OFF_TYPE;
+  const showOffOptions = variant === "weekday" || variant === "default";
   const triggerClassName = cn(className ?? "w-full min-w-0 sm:w-[200px]");
 
   return (
@@ -75,6 +85,8 @@ function ShiftSelectInner({
                 </span>
                 <span className="ml-2">{selectedShift.name}</span>
               </>
+            ) : value === null ? (
+              OFF_TYPE_LABELS[resolvedOffType]
             ) : (
               placeholder
             )}
@@ -92,21 +104,46 @@ function ShiftSelectInner({
             <CommandList className="max-h-[min(24rem,70vh)]">
               <CommandEmpty>Không tìm thấy ca</CommandEmpty>
               <CommandGroup>
-                <CommandItem
-                  value="- nghỉ"
-                  onSelect={() => {
-                    onChange(null);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "h-4 w-4",
-                      value === null ? "opacity-100" : "opacity-0",
+                {showOffOptions
+                  ? OFF_TYPE_OPTIONS.map((option) => (
+                      <CommandItem
+                        key={option.value}
+                        value={option.label}
+                        onSelect={() => {
+                          onChange(null, option.value);
+                          setOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "h-4 w-4",
+                            value === null && resolvedOffType === option.value
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                        <span className="text-muted-foreground">
+                          {option.label}
+                        </span>
+                      </CommandItem>
+                    ))
+                  : (
+                      <CommandItem
+                        value="- nghỉ"
+                        onSelect={() => {
+                          onChange(null);
+                          setOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            "h-4 w-4",
+                            value === null ? "opacity-100" : "opacity-0",
+                          )}
+                        />
+                        <span className="text-muted-foreground">- Nghỉ -</span>
+                      </CommandItem>
                     )}
-                  />
-                  <span className="text-muted-foreground">- Nghỉ -</span>
-                </CommandItem>
               </CommandGroup>
               {shiftGroups.map((group) => (
                 <CommandGroup key={group.label} heading={group.label}>
@@ -116,7 +153,7 @@ function ShiftSelectInner({
                       value={shiftCommandValue(shift)}
                       title={`${shift.note} · ${shift.code}`}
                       onSelect={() => {
-                        onChange(shift.code);
+                        onChange(shift.code, null);
                         setOpen(false);
                       }}
                     >

@@ -1,5 +1,10 @@
 import { EMPLOYEES } from "@/lib/constants/employees";
 import {
+  getOffExportNote,
+  resolveOffType,
+  type OffType,
+} from "@/lib/constants/off-types";
+import {
   AFTERNOON_OFF_LABEL,
   isAfternoonOffShift,
 } from "@/lib/constants/shifts";
@@ -27,6 +32,7 @@ export type AttendanceExportRow = {
 type DaySlice = {
   date: string;
   shiftCode: string | null;
+  offType: OffType | null;
   locationKey: string | null;
   extraEvening: boolean;
   eveningLocationKey: string | null;
@@ -40,6 +46,7 @@ type Segment = {
   shiftLabel: string;
   locationCode: string | null;
   kind: SegmentKind;
+  offType: OffType | null;
 };
 
 const KIND_SORT_ORDER: Record<SegmentKind, number> = {
@@ -55,6 +62,7 @@ function buildDaySlices(weekStart: string, row: EmployeeWeekRow): DaySlice[] {
   return DAY_KEYS.map((day) => ({
     date: getDayDate(weekStart, day),
     shiftCode: row.days[day].shiftCode,
+    offType: row.days[day].offType,
     locationKey: row.days[day].locationKey,
     extraEvening: row.days[day].extraEvening,
     eveningLocationKey: row.days[day].eveningLocationKey,
@@ -64,7 +72,9 @@ function buildDaySlices(weekStart: string, row: EmployeeWeekRow): DaySlice[] {
 function buildConsecutiveSegments(
   days: DaySlice[],
   isActive: (day: DaySlice) => boolean,
-  createSegment: (day: DaySlice) => Pick<Segment, "shiftLabel" | "locationCode">,
+  createSegment: (
+    day: DaySlice,
+  ) => Pick<Segment, "shiftLabel" | "locationCode" | "offType">,
   canMergeWithDay: (current: Segment, day: DaySlice) => boolean,
   kind: SegmentKind,
 ): Segment[] {
@@ -77,7 +87,7 @@ function buildConsecutiveSegments(
       continue;
     }
 
-    const { shiftLabel, locationCode } = createSegment(day);
+    const segmentFields = createSegment(day);
 
     if (
       current &&
@@ -91,8 +101,9 @@ function buildConsecutiveSegments(
     current = {
       fromDate: day.date,
       toDate: day.date,
-      shiftLabel,
-      locationCode,
+      shiftLabel: segmentFields.shiftLabel,
+      locationCode: segmentFields.locationCode,
+      offType: segmentFields.offType,
       kind,
     };
     segments.push(current);
@@ -121,6 +132,7 @@ function buildWorkSegments(days: DaySlice[]): Segment[] {
     (day) => ({
       shiftLabel: day.shiftCode!,
       locationCode: getWorkLocationCode(day.locationKey),
+      offType: null,
     }),
     (current, day) =>
       current.shiftLabel === day.shiftCode &&
@@ -133,8 +145,13 @@ function buildOffSegments(days: DaySlice[]): Segment[] {
   return buildConsecutiveSegments(
     days,
     (day) => day.shiftCode === null,
-    () => ({ shiftLabel: OFF_LABEL, locationCode: null }),
-    () => true,
+    (day) => ({
+      shiftLabel: OFF_LABEL,
+      locationCode: null,
+      offType: resolveOffType(day.offType),
+    }),
+    (current, day) =>
+      current.offType === resolveOffType(day.offType),
     "off",
   );
 }
@@ -146,6 +163,7 @@ function buildEveningSegments(days: DaySlice[]): Segment[] {
     (day) => ({
       shiftLabel: EVENING_SHIFT_CODE,
       locationCode: getWorkLocationCode(day.eveningLocationKey),
+      offType: null,
     }),
     (current, day) =>
       current.locationCode === getWorkLocationCode(day.eveningLocationKey),
@@ -164,6 +182,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         shiftLabel: day.shiftCode,
         locationCode: getWorkLocationCode(day.locationKey),
         kind: "work",
+        offType: null,
       });
     } else {
       segments.push({
@@ -172,6 +191,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         shiftLabel: OFF_LABEL,
         locationCode: null,
         kind: "off",
+        offType: null,
       });
     }
 
@@ -182,6 +202,7 @@ function buildWeekendSegments(days: DaySlice[]): Segment[] {
         shiftLabel: EVENING_SHIFT_CODE,
         locationCode: getWorkLocationCode(day.eveningLocationKey),
         kind: "evening",
+        offType: null,
       });
     }
   }
@@ -232,7 +253,9 @@ export function buildAttendanceRows(sheet: WeekSheet): AttendanceExportRow[] {
         locationCode: segment.locationCode,
         note: isAfternoonOffShift(segment.shiftLabel)
           ? AFTERNOON_OFF_LABEL
-          : null,
+          : segment.kind === "off"
+            ? getOffExportNote(segment.offType)
+            : null,
       });
     }
   }
@@ -256,6 +279,7 @@ export function buildDaySlicesForTest(
       DayKey,
       {
         shiftCode: string | null;
+        offType?: OffType | null;
         locationKey?: string | null;
         extraEvening?: boolean;
         eveningLocationKey?: string | null;

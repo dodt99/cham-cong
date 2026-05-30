@@ -11,6 +11,7 @@ import {
   selectDayEntry,
   selectEmployeeDefaults,
 } from "@/lib/attendance/selectors";
+import type { OffType } from "@/lib/constants/off-types";
 import type { DayKey } from "@/lib/types/attendance";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
@@ -36,7 +37,8 @@ function AttendanceDefaultFieldsInner({
   );
 
   const onShiftChange = useCallback(
-    (code: string | null) => setDefaultShift(employeeId, code),
+    (code: string | null, offType?: OffType | null) =>
+      setDefaultShift(employeeId, code, offType),
     [setDefaultShift, employeeId],
   );
   const onLocationChange = useCallback(
@@ -60,12 +62,14 @@ function AttendanceDefaultFieldsInner({
       <ShiftSelect
         variant="default"
         value={defaults.defaultShiftCode}
+        offType={defaults.defaultOffType}
         onChange={onShiftChange}
         className={fieldClassName}
       />
       <WorkLocationSelect
         value={defaults.defaultLocationKey}
         onChange={onLocationChange}
+        disabled={defaults.defaultShiftCode === null}
         className={fieldClassName}
       />
     </div>
@@ -117,7 +121,8 @@ function AttendanceDayFieldsInner({
   const isWeekend = day === "sat" || day === "sun";
 
   const onShiftChange = useCallback(
-    (code: string | null) => setDayShift(employeeId, day, code),
+    (code: string | null, offType?: OffType | null) =>
+      setDayShift(employeeId, day, code, offType),
     [setDayShift, employeeId, day],
   );
   const onLocationChange = useCallback(
@@ -142,6 +147,7 @@ function AttendanceDayFieldsInner({
       <ShiftSelect
         variant={isWeekend ? "weekend" : "weekday"}
         value={dayEntry.shiftCode}
+        offType={isWeekend ? null : dayEntry.offType}
         onChange={onShiftChange}
         className={fieldClassName}
       />
@@ -149,7 +155,7 @@ function AttendanceDayFieldsInner({
         variant={isWeekend ? "weekend" : "default"}
         value={dayEntry.locationKey}
         onChange={onLocationChange}
-        // disabled={dayEntry.shiftCode === null}
+        disabled={dayEntry.shiftCode === null}
         className={fieldClassName}
       />
     </div>

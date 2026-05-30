@@ -28,6 +28,40 @@ describe("normalizePersistedPayload", () => {
     });
   });
 
+  it("migrates legacy off days to default offType leave", () => {
+    const raw = JSON.stringify({
+      state: {
+        sheets: {
+          "2026-01-05": {
+            weekStart: "2026-01-05",
+            rows: {
+              "001": {
+                defaultShiftCode: null,
+                defaultLocationKey: null,
+                days: {
+                  mon: {
+                    shiftCode: null,
+                    locationKey: null,
+                    extraEvening: false,
+                    eveningLocationKey: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+        activeWeekStart: "2026-01-05",
+      },
+      version: 0,
+    });
+
+    const store = normalizePersistedPayload(raw);
+    const row = store?.sheets["2026-01-05"]?.rows["001"];
+
+    expect(row?.defaultOffType).toBe("leave");
+    expect(row?.days.mon.offType).toBe("leave");
+  });
+
   it("returns null for invalid json", () => {
     expect(normalizePersistedPayload("not-json")).toBeNull();
   });

@@ -37,6 +37,7 @@ export const selectEmployeeDefaults =
     if (!row) return undefined;
     return {
       defaultShiftCode: row.defaultShiftCode,
+      defaultOffType: row.defaultOffType,
       defaultLocationKey: row.defaultLocationKey,
     };
   };

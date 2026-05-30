@@ -8,6 +8,10 @@ import {
 } from "@/lib/storage/attendance-storage";
 import { createFirestorePersistStorage } from "@/lib/storage/firestore-persist-storage";
 import {
+  DEFAULT_OFF_TYPE,
+  type OffType,
+} from "@/lib/constants/off-types";
+import {
   DAY_KEYS,
   type AttendanceStore,
   type DayKey,
@@ -16,12 +20,17 @@ import {
 type AttendanceActions = {
   createWeek: (weekStart: string) => void;
   setActiveWeek: (weekStart: string) => void;
-  setDefaultShift: (employeeId: string, code: string | null) => void;
+  setDefaultShift: (
+    employeeId: string,
+    code: string | null,
+    offType?: OffType | null,
+  ) => void;
   setDefaultLocation: (employeeId: string, key: string | null) => void;
   setDayShift: (
     employeeId: string,
     day: DayKey,
     code: string | null,
+    offType?: OffType | null,
   ) => void;
   setDayLocation: (
     employeeId: string,
@@ -62,15 +71,18 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
         set({ activeWeekStart: weekStart });
       },
 
-      setDefaultShift: (employeeId, code) => {
+      setDefaultShift: (employeeId, code, offType = null) => {
         const { activeWeekStart, sheets } = get();
         if (!activeWeekStart || !sheets[activeWeekStart]) return;
 
         const sheet = { ...sheets[activeWeekStart] };
         const rows = { ...sheet.rows };
+        const resolvedOffType =
+          code === null ? (offType ?? DEFAULT_OFF_TYPE) : null;
         const row = {
           ...rows[employeeId],
           defaultShiftCode: code,
+          defaultOffType: resolvedOffType,
           days: { ...rows[employeeId].days },
         };
         for (const day of DAY_KEYS.slice(0, 5)) {
@@ -78,6 +90,7 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
           row.days[day] = {
             ...prev,
             shiftCode: code,
+            offType: code === null ? resolvedOffType : null,
             locationKey: code === null ? null : prev.locationKey,
           };
         }
@@ -111,13 +124,15 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
         });
       },
 
-      setDayShift: (employeeId, day, code) => {
+      setDayShift: (employeeId, day, code, offType = null) => {
         const { activeWeekStart, sheets } = get();
         if (!activeWeekStart || !sheets[activeWeekStart]) return;
 
         const sheet = { ...sheets[activeWeekStart] };
         const rows = { ...sheet.rows };
         const prev = rows[employeeId].days[day];
+        const resolvedOffType =
+          code === null ? (offType ?? DEFAULT_OFF_TYPE) : null;
         rows[employeeId] = {
           ...rows[employeeId],
           days: {
@@ -125,6 +140,7 @@ export const useAttendanceZustandStore = create<AttendanceState>()(
             [day]: {
               ...prev,
               shiftCode: code,
+              offType: resolvedOffType,
               locationKey: code === null ? null : prev.locationKey,
             },
           },
