@@ -19,13 +19,22 @@ import { useAttendanceZustandStore } from "@/stores/attendance-store";
 
 const DEFAULT_TAB = "weekday";
 
+const getDefaultTab = () => {
+  return localStorage.getItem("attendance-default-tab") || DEFAULT_TAB;
+};
+
+const saveDefaultTab = (tab: string) => {
+  localStorage.setItem("attendance-default-tab", tab);
+};
+
 export function AttendanceSectionTabs() {
   const hasActiveSheet = useAttendanceZustandStore(selectHasActiveSheet);
-  const [selectedTab, setSelectedTab] = useState(DEFAULT_TAB);
-  const [renderedTab, setRenderedTab] = useState(DEFAULT_TAB);
+  const [selectedTab, setSelectedTab] = useState(getDefaultTab());
+  const [renderedTab, setRenderedTab] = useState(getDefaultTab());
   const [isPending, startTransition] = useTransition();
 
   const handleTabChange = (value: string) => {
+    saveDefaultTab(value);
     setSelectedTab(value);
     startTransition(() => {
       setRenderedTab(value);
