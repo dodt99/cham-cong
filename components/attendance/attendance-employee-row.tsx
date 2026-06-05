@@ -7,6 +7,10 @@ import {
   AttendanceDefaultColumnCell,
 } from "@/components/attendance/attendance-table-cells";
 import { TableCell, TableRow } from "@/components/ui/table";
+import {
+  DEFAULT_SELECT_TONE_CLASS,
+  getDaySelectToneClass,
+} from "@/lib/attendance/column-colors";
 import type { Employee } from "@/lib/constants/employees";
 import { DAY_KEYS, type DayKey } from "@/lib/types/attendance";
 
@@ -14,12 +18,14 @@ type AttendanceEmployeeRowProps = {
   employee: Employee;
   dayKeys?: readonly DayKey[];
   showDefaultColumn?: boolean;
+  colorizeColumns?: boolean;
 };
 
 function AttendanceEmployeeRowInner({
   employee,
   dayKeys = DAY_KEYS,
   showDefaultColumn = true,
+  colorizeColumns = false,
 }: AttendanceEmployeeRowProps) {
   return (
     <TableRow>
@@ -30,10 +36,22 @@ function AttendanceEmployeeRowInner({
         {employee.fullName}
       </TableCell>
       {showDefaultColumn && (
-        <AttendanceDefaultColumnCell employeeId={employee.id} />
+        <AttendanceDefaultColumnCell
+          employeeId={employee.id}
+          selectToneClassName={
+            colorizeColumns ? DEFAULT_SELECT_TONE_CLASS : undefined
+          }
+        />
       )}
       {dayKeys.map((day) => (
-        <AttendanceDayCell key={day} employeeId={employee.id} day={day} />
+        <AttendanceDayCell
+          key={day}
+          employeeId={employee.id}
+          day={day}
+          selectToneClassName={
+            colorizeColumns ? getDaySelectToneClass(day) : undefined
+          }
+        />
       ))}
     </TableRow>
   );

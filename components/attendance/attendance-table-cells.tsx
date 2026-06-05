@@ -21,12 +21,14 @@ type AttendanceDefaultFieldsProps = {
   employeeId: string;
   className?: string;
   layout?: FieldsLayout;
+  selectToneClassName?: string;
 };
 
 function AttendanceDefaultFieldsInner({
   employeeId,
   className,
   layout = "column",
+  selectToneClassName,
 }: AttendanceDefaultFieldsProps) {
   const defaults = useAttendanceZustandStore(
     useShallow(selectEmployeeDefaults(employeeId)),
@@ -65,12 +67,14 @@ function AttendanceDefaultFieldsInner({
         offType={defaults.defaultOffType}
         onChange={onShiftChange}
         className={fieldClassName}
+        toneClassName={selectToneClassName}
       />
       <WorkLocationSelect
         value={defaults.defaultLocationKey}
         onChange={onLocationChange}
         disabled={defaults.defaultShiftCode === null}
         className={fieldClassName}
+        toneClassName={selectToneClassName}
       />
     </div>
   );
@@ -80,16 +84,19 @@ export const AttendanceDefaultFields = memo(AttendanceDefaultFieldsInner);
 
 type AttendanceDefaultColumnCellProps = {
   employeeId: string;
+  selectToneClassName?: string;
 };
 
 function AttendanceDefaultColumnCellInner({
   employeeId,
+  selectToneClassName,
 }: AttendanceDefaultColumnCellProps) {
   return (
     <TableCell className="align-top">
       <AttendanceDefaultFields
         employeeId={employeeId}
         className="mx-auto min-w-[150px] max-w-[200px]"
+        selectToneClassName={selectToneClassName}
       />
     </TableCell>
   );
@@ -105,6 +112,7 @@ type AttendanceDayFieldsProps = {
   className?: string;
   align?: "start" | "center";
   layout?: FieldsLayout;
+  selectToneClassName?: string;
 };
 
 function AttendanceDayFieldsInner({
@@ -113,6 +121,7 @@ function AttendanceDayFieldsInner({
   className,
   align = "center",
   layout = "column",
+  selectToneClassName,
 }: AttendanceDayFieldsProps) {
   const dayEntry = useAttendanceZustandStore(selectDayEntry(employeeId, day));
   const setDayShift = useAttendanceZustandStore((s) => s.setDayShift);
@@ -150,6 +159,7 @@ function AttendanceDayFieldsInner({
         offType={isWeekend ? null : dayEntry.offType}
         onChange={onShiftChange}
         className={fieldClassName}
+        toneClassName={selectToneClassName}
       />
       <WorkLocationSelect
         variant={isWeekend ? "weekend" : "default"}
@@ -157,6 +167,7 @@ function AttendanceDayFieldsInner({
         onChange={onLocationChange}
         disabled={dayEntry.shiftCode === null}
         className={fieldClassName}
+        toneClassName={selectToneClassName}
       />
     </div>
   );
@@ -167,15 +178,21 @@ export const AttendanceDayFields = memo(AttendanceDayFieldsInner);
 type AttendanceDayCellProps = {
   employeeId: string;
   day: DayKey;
+  selectToneClassName?: string;
 };
 
-function AttendanceDayCellInner({ employeeId, day }: AttendanceDayCellProps) {
+function AttendanceDayCellInner({
+  employeeId,
+  day,
+  selectToneClassName,
+}: AttendanceDayCellProps) {
   return (
     <TableCell className="align-top">
       <AttendanceDayFields
         employeeId={employeeId}
         day={day}
         className="mx-auto min-w-[150px] max-w-[200px]"
+        selectToneClassName={selectToneClassName}
       />
     </TableCell>
   );

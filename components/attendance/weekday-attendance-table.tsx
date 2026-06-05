@@ -32,6 +32,7 @@ export function WeekdayAttendanceTable() {
         <AttendanceEmployeeList
           dayKeys={WEEKDAY_DAY_KEYS}
           showDefaultColumn
+          colorizeColumns
           employees={filteredEmployees}
         />
       </div>
@@ -72,6 +73,7 @@ export function WeekdayAttendanceTable() {
                   employee={employee}
                   dayKeys={WEEKDAY_DAY_KEYS}
                   showDefaultColumn
+                  colorizeColumns
                 />
               ))
             )}

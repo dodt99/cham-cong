@@ -11,12 +11,14 @@ import { useAttendanceZustandStore } from "@/stores/attendance-store";
 type AttendanceEmployeeListProps = {
   dayKeys: readonly DayKey[];
   showDefaultColumn?: boolean;
+  colorizeColumns?: boolean;
   employees?: Employee[];
 };
 
 export function AttendanceEmployeeList({
   dayKeys,
   showDefaultColumn = true,
+  colorizeColumns = false,
   employees = EMPLOYEES,
 }: AttendanceEmployeeListProps) {
   const weekStart = useAttendanceZustandStore(selectActiveWeekStart);
@@ -48,6 +50,7 @@ export function AttendanceEmployeeList({
             weekStart={weekStart}
             dayKeys={dayKeys}
             showDefaultColumn={showDefaultColumn}
+            colorizeColumns={colorizeColumns}
             isOpen={openEmployeeId === employee.id}
             onOpenChange={handleOpenChange}
           />

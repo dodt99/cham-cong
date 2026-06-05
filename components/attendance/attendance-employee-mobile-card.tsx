@@ -13,6 +13,10 @@ import {
   CollapsibleContentPanel,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  DEFAULT_SELECT_TONE_CLASS,
+  getDaySelectToneClass,
+} from "@/lib/attendance/column-colors";
 import type { Employee } from "@/lib/constants/employees";
 import type { DayKey } from "@/lib/types/attendance";
 import { formatDayHeader } from "@/lib/utils/week";
@@ -22,6 +26,7 @@ type AttendanceEmployeeMobileCardProps = {
   weekStart: string;
   dayKeys: readonly DayKey[];
   showDefaultColumn?: boolean;
+  colorizeColumns?: boolean;
   isOpen: boolean;
   onOpenChange: (employeeId: string, open: boolean) => void;
 };
@@ -31,6 +36,7 @@ function AttendanceEmployeeMobileCardInner({
   weekStart,
   dayKeys,
   showDefaultColumn = true,
+  colorizeColumns = false,
   isOpen,
   onOpenChange,
 }: AttendanceEmployeeMobileCardProps) {
@@ -72,7 +78,13 @@ function AttendanceEmployeeMobileCardInner({
               <h4 className="text-xs font-semibold text-muted-foreground">
                 Mặc định
               </h4>
-              <AttendanceDefaultFields employeeId={employee.id} layout="row" />
+              <AttendanceDefaultFields
+                employeeId={employee.id}
+                layout="row"
+                selectToneClassName={
+                  colorizeColumns ? DEFAULT_SELECT_TONE_CLASS : undefined
+                }
+              />
             </section>
           )}
           {dayKeys.map((day) => (
@@ -85,6 +97,9 @@ function AttendanceEmployeeMobileCardInner({
                 day={day}
                 align="start"
                 layout="row"
+                selectToneClassName={
+                  colorizeColumns ? getDaySelectToneClass(day) : undefined
+                }
               />
             </section>
           ))}

@@ -33,6 +33,7 @@ type WorkLocationSelectProps = {
   onChange: (key: string | null) => void;
   placeholder?: string;
   className?: string;
+  toneClassName?: string;
   disabled?: boolean;
   variant?: WorkLocationSelectVariant;
   locations?: WorkLocation[];
@@ -43,6 +44,7 @@ function WorkLocationSelectInner({
   onChange,
   placeholder = "Địa điểm",
   className,
+  toneClassName,
   disabled = false,
   variant = "default",
   locations,
@@ -66,6 +68,7 @@ function WorkLocationSelectInner({
           className={cn(
             "h-9 justify-between px-3 font-normal shadow-sm",
             triggerClassName,
+            toneClassName,
             !selectedLocation && "text-muted-foreground",
           )}
         >

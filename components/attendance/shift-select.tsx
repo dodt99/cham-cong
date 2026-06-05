@@ -41,6 +41,7 @@ type ShiftSelectProps = {
   variant: ShiftSelectVariant;
   placeholder?: string;
   className?: string;
+  toneClassName?: string;
   disabled?: boolean;
 };
 
@@ -51,6 +52,7 @@ function ShiftSelectInner({
   variant,
   placeholder = "Chọn ca",
   className,
+  toneClassName,
   disabled = false,
 }: ShiftSelectProps) {
   const [open, setOpen] = useState(false);
@@ -74,6 +76,7 @@ function ShiftSelectInner({
           className={cn(
             "h-9 justify-between px-3 font-normal shadow-sm",
             triggerClassName,
+            toneClassName,
             !selectedShift && "text-muted-foreground",
           )}
         >
