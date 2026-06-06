@@ -9,8 +9,8 @@ export const DAY_SELECT_TONE_CLASS: Record<DayKey, string> = {
   wed: "bg-sky-100 border-sky-300 hover:bg-sky-200 dark:bg-sky-950/60 dark:border-sky-700 dark:hover:bg-sky-950/80",
   thu: "bg-[#F7D6D0] border-[#e8b8ae] hover:bg-[#f0c4bc] dark:bg-[#F7D6D0]/25 dark:border-[#e8b8ae] dark:hover:bg-[#F7D6D0]/40",
   fri: "bg-violet-100 border-violet-300 hover:bg-violet-200 dark:bg-violet-950/60 dark:border-violet-700 dark:hover:bg-violet-950/80",
-  sat: "bg-sky-50 border-sky-200 hover:bg-sky-100 dark:bg-sky-950/50 dark:border-sky-800 dark:hover:bg-sky-950/70",
-  sun: "bg-rose-50 border-rose-200 hover:bg-rose-100 dark:bg-rose-950/50 dark:border-rose-800 dark:hover:bg-rose-950/70",
+  sat: "bg-[#d4e8de] border-[#8CB3A2] hover:bg-[#c0dbd0] dark:bg-[#8CB3A2]/25 dark:border-[#8CB3A2] dark:hover:bg-[#8CB3A2]/40",
+  sun: "bg-[#fce4de] border-[#E79989] hover:bg-[#f5c8be] dark:bg-[#E79989]/25 dark:border-[#E79989] dark:hover:bg-[#E79989]/40",
 };
 
 export function getDaySelectToneClass(day: DayKey): string {
