@@ -5,11 +5,17 @@ import { useMemo, useState } from "react";
 import { EmployeeSelect } from "@/components/attendance/employee-select";
 import { WorkLocationSelect } from "@/components/attendance/work-location-select";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import {
+  getDayButtonToneClass,
+  getDayCardToneClass,
+  getDayHeaderTextClass,
+  getDayItemToneClass,
+} from "@/lib/attendance/column-colors";
 import {
   EMPTY_EVENING_ASSIGNMENTS,
   buildEveningAssignments,
 } from "@/lib/attendance/evening-selectors";
+import { cn } from "@/lib/utils";
 import { EMPLOYEES_EVENING_AND_WEEKEND } from "@/lib/constants/employees";
 import type { DayKey } from "@/lib/types/attendance";
 import { useAttendanceZustandStore } from "@/stores/attendance-store";
@@ -67,13 +73,23 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
     employeeId;
 
   return (
-    <section className="rounded-lg border bg-card p-4">
-      <h3 className="mb-3 text-sm font-semibold">
+    <section
+      className={cn(
+        "rounded-lg border border-l-4 bg-card p-4",
+        getDayCardToneClass(day),
+      )}
+    >
+      <h3
+        className={cn(
+          "mb-3 text-sm font-semibold",
+          getDayHeaderTextClass(day),
+        )}
+      >
         {formatDayHeader(weekStart, day)}
       </h3>
 
       {assignments.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm italic text-muted-foreground/70">
           Chưa có nhân viên ca tối.
         </p>
       ) : (
@@ -81,7 +97,10 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
           {assignments.map((assignment) => (
             <li
               key={assignment.employeeId}
-              className="relative flex flex-col gap-2 rounded-md border bg-background p-2 sm:flex-row sm:items-center"
+              className={cn(
+                "relative flex flex-col gap-2 rounded-md px-3 py-2 sm:flex-row sm:items-center",
+                getDayItemToneClass(day),
+              )}
             >
               <span className="min-w-0 flex-1 text-sm font-medium">
                 <span className="font-mono text-xs text-muted-foreground">
@@ -116,7 +135,7 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
         </ul>
       )}
 
-      <div className="mt-4 flex flex-col gap-2 border-t border-dashed pt-3 sm:flex-row sm:flex-wrap sm:items-end">
+      <div className="mt-4 flex flex-col gap-2 pt-3 sm:flex-row sm:flex-wrap sm:items-end">
         <div className="grid w-full min-w-0 gap-1 sm:min-w-[12rem] sm:flex-1 sm:max-w-xs">
           {/* <Label htmlFor={`evening-add-${day}`} className="text-xs">
             Thêm nhân viên
@@ -140,9 +159,9 @@ export function EveningDaySection({ weekStart, day }: EveningDaySectionProps) {
         </div>
         <Button
           type="button"
-          variant="secondary"
           onClick={handleAdd}
           disabled={!pendingEmployeeId || availableEmployees.length === 0}
+          className={getDayButtonToneClass(day)}
         >
           Thêm
         </Button>
