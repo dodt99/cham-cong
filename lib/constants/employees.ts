@@ -17,7 +17,7 @@ export const EMPLOYEES: Employee[] = [
   { id: "24687", fullName: "Đào Thị Hải Yến", taxCode: "8532343355" },
   { id: "24665", fullName: "Lê Hồng Dương", taxCode: "8712601904" },
   { id: "23745", fullName: "Phạm Thị Thu Trang", taxCode: "8437660185" },
-  { id: "30061", fullName: "Nguyễn Quỳnh Chi", taxCode: "8691036014" },
+  // { id: "30061", fullName: "Nguyễn Quỳnh Chi", taxCode: "8691036014" },
   { id: "29121", fullName: "Nguyễn Thị Linh", taxCode: "8615412450" },
   { id: "30070", fullName: "Phạm Thị Thu", taxCode: "8657412036" },
   { id: "24669", fullName: "Nguyễn Thị Hương", taxCode: "8682241088" },

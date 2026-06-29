@@ -51,6 +51,7 @@ const WORK_LOCATION_ENTRIES: WorkLocationEntry[] = [
   { type: WorkLocationType.NORMAL, name: "B1", code: "K1.BTD", block: "Tầng B1" },
   { type: WorkLocationType.NORMAL, name: "7C", code: "K1.703-706", block: "Tầng 7" },
   { type: WorkLocationType.NORMAL, name: "7D", code: "K1.707-712", block: "Tầng 7" },
+  { type: WorkLocationType.NORMAL, name: "CS2", code: "CS2", block: "CS2" },
   // Evening
   { type: WorkLocationType.EVENING, name: "Siêu âm", code: "K1.2TDSA", block: "Tầng 2" },
   { type: WorkLocationType.EVENING, name: "P321", code: "K1.P321", block: "Tầng 3" },
@@ -63,6 +64,7 @@ const WORK_LOCATION_ENTRIES: WorkLocationEntry[] = [
   { type: WorkLocationType.WEEKEND, name: "P322", code: "K1.P322", block: "Tầng 3" },
   { type: WorkLocationType.WEEKEND, name: "P323", code: "K1.P323", block: "Tầng 3" },
   { type: WorkLocationType.WEEKEND, name: "Bốt 1", code: "K1.HDV1", block: "Quầy thông tin" },
+  { type: WorkLocationType.WEEKEND, name: "Tầng 7", code: "K1.707-712", block: "Tầng 7" },
 ];
 
 function toWorkLocation(entry: WorkLocationEntry): WorkLocation {
