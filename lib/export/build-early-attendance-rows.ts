@@ -34,7 +34,7 @@ export type EarlyAttendanceRow = {
 };
 
 const WEEKDAY_KEYS = DAY_KEYS.slice(0, 5);
-const EARLY_EXCLUDED_SHIFT_CODES = new Set(["K18"]);
+const EARLY_EXCLUDED_SHIFT_CODES = new Set(["K18", "K39"]);
 
 function getEarlyAssignedEnd(
   shiftCode: string,
