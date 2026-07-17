@@ -32,7 +32,7 @@ function AttendanceEmployeeRowInner({
       <TableCell className="sticky left-0 z-10 bg-background font-mono text-xs">
         {employee.id}
       </TableCell>
-      <TableCell className="sticky left-[90px] z-10 bg-background font-medium shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
+      <TableCell className="sticky left-[60px] z-10 bg-background font-medium shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
         {employee.fullName}
       </TableCell>
       {showDefaultColumn && (

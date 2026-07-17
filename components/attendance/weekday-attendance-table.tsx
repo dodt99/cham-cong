@@ -40,17 +40,17 @@ export function WeekdayAttendanceTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="sticky left-0 z-20 min-w-[90px] bg-background">
+              <TableHead className="sticky left-0 z-20 min-w-[60px] bg-background">
                 Mã NV
               </TableHead>
-              <TableHead className="sticky left-[90px] z-20 min-w-[160px] bg-background shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
+              <TableHead className="sticky left-[60px] z-20 min-w-[130px] bg-background shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
                 Họ và tên
               </TableHead>
-              <TableHead className="min-w-[200px] text-center">
+              <TableHead className="min-w-[180px] text-center">
                 Mặc định
               </TableHead>
               {WEEKDAY_DAY_KEYS.map((day) => (
-                <TableHead key={day} className="min-w-[220px] text-center">
+                <TableHead key={day} className="min-w-[180px] text-center">
                   {formatDayHeader(weekStart, day)}
                 </TableHead>
               ))}
