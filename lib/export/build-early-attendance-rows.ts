@@ -68,6 +68,7 @@ export function buildEarlyAttendanceRows(
       const entry = weekRow.days[day];
       if (entry.shiftCode === null) continue;
       if (EARLY_EXCLUDED_SHIFT_CODES.has(entry.shiftCode)) continue;
+      if (entry.locationKey === "NORMAL-CS2") continue;
 
       const shift = getShiftByCode(entry.shiftCode);
 

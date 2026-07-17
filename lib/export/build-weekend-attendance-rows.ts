@@ -45,6 +45,7 @@ export function buildWeekendAttendanceRows(
     for (const day of WEEKEND_DAY_KEYS) {
       const entry = weekRow.days[day];
       if (entry.shiftCode === null) continue;
+      if (entry.locationKey === "WEEKEND-CS2") continue;
 
       const shift = getShiftByCode(entry.shiftCode);
 
