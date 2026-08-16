@@ -35,13 +35,14 @@ export const EMPLOYEES: Employee[] = [
   { id: "24644", fullName: "Nguyễn Phương Anh", taxCode: "8643231625" },
   { id: "19439", fullName: "Nguyễn Thị Bích Hằng", taxCode: "8097507243" },
   { id: "19433", fullName: "Đỗ Thị Ngọc Diệp", taxCode: "8480133731" },
+  { id: "19434", fullName: "Lê Quang Trung", taxCode: "8429284755" },
+  { id: "23741", fullName: "Vũ Quang Anh", taxCode: "8712601887" },
+  { id: "23746", fullName: "Nguyễn Ngọc Hoàng Yến", taxCode: "8439532809" },
   { id: "30063", fullName: "Nguyễn Thị Mai Trang", taxCode: "8718750395" },
   { id: "30066", fullName: "Vương Thị Ngọc Ánh", taxCode: "8614690529" },
   { id: "30064", fullName: "Đỗ Minh Khuê", taxCode: "8625569965" },
   { id: "30068", fullName: "Nguyễn Thị Minh Hòa", taxCode: "8571815717" },
-  { id: "19434", fullName: "Lê Quang Trung", taxCode: "8429284755" },
-  { id: "24686", fullName: "Vũ Anh Văn", taxCode: "8124737947" },
-  { id: "23746", fullName: "Nguyễn Ngọc Hoàng Yến", taxCode: "8439532809" },
+  { id: "30065", fullName: "Hoàng Thị Thủy", taxCode: "8573268202" },
   { id: "23160", fullName: "PHAN THỊ HỒNG THÚY", taxCode: "8009287175" },
 ];
 
@@ -53,11 +54,10 @@ export const EMPLOYEES_K2: Employee[] = [
   { id: "19431", fullName: "Đặng Lan Phương", taxCode: "8480133805" },
   { id: "19169", fullName: "Đỗ Như Thành", taxCode: "8626680596" },
   { id: "23420", fullName: "Nguyễn Thị Thu Hồng", taxCode: "8115110652" },
-  { id: "23741", fullName: "Vũ Quang Anh", taxCode: "8712601887" },
-  { id: "30065", fullName: "Hoàng Thị Thủy", taxCode: "8573268202" },
   { id: "30069", fullName: "Đặng Thị Thu Phương", taxCode: "8425272170" },
   { id: "19436", fullName: "Nguyễn Diệu Hoa", taxCode: "8331453125" },
   { id: "23744", fullName: "Trần Thị Hương", taxCode: "8556638559" },
+  { id: "24686", fullName: "Vũ Anh Văn", taxCode: "8124737947" },
 ];
 
 export const EMPLOYEES_EVENING_AND_WEEKEND: Employee[] = [
