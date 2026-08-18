@@ -249,7 +249,7 @@ export function buildAttendanceRows(sheet: WeekSheet): AttendanceExportRow[] {
         fullName: employee.fullName,
         fromDate: segment.fromDate,
         toDate: segment.toDate,
-        shiftLabel: segment.shiftLabel,
+        shiftLabel: segment.shiftLabel === '2K44' ? '2K43' : segment.shiftLabel,
         locationCode: segment.locationCode,
         note: isAfternoonOffShift(segment.shiftLabel)
           ? AFTERNOON_OFF_LABEL
@@ -261,37 +261,4 @@ export function buildAttendanceRows(sheet: WeekSheet): AttendanceExportRow[] {
   }
 
   return rows;
-}
-
-/** @internal Exported for tests */
-export function buildEmployeeSegmentsForTest(
-  weekStart: string,
-  row: EmployeeWeekRow,
-): Segment[] {
-  return buildEmployeeSegments(weekStart, row);
-}
-
-/** @internal Exported for tests */
-export function buildDaySlicesForTest(
-  weekStart: string,
-  days: Partial<
-    Record<
-      DayKey,
-      {
-        shiftCode: string | null;
-        offType?: OffType | null;
-        locationKey?: string | null;
-        extraEvening?: boolean;
-        eveningLocationKey?: string | null;
-      }
-    >
-  >,
-): DaySlice[] {
-  const row = createEmptyEmployeeRow();
-  for (const day of DAY_KEYS) {
-    if (days[day]) {
-      row.days[day] = { ...row.days[day], ...days[day] };
-    }
-  }
-  return buildDaySlices(weekStart, row);
 }
