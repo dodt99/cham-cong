@@ -30,6 +30,7 @@ export const SHIFT_GROUPS: ShiftGroup[] = [
       shift("K02", "5h00-16h30", "Ca thường", { h: 5, m: 0 }, { h: 16, m: 30 }),
       shift("K04", "5h30-16h30", "Ca thường", { h: 5, m: 30 }, { h: 16, m: 30 }),
       shift("K07", "6h00-16h30", "Ca thường", { h: 6, m: 0 }, { h: 16, m: 30 }),
+      shift("K14", "6h30-18h30", "Ca thường", { h: 6, m: 30 }, { h: 18, m: 30 }),
       shift("K18", "7h30-17h00", "Ca thường", { h: 7, m: 30 }, { h: 17, m: 0 }),
       shift("2K43", "6h30-16h30", "Ca thường", { h: 6, m: 30 }, { h: 16, m: 30 }),
       shift("2K04", "5h30-16h30", "Ca thường", { h: 5, m: 30 }, { h: 16, m: 30 }),
