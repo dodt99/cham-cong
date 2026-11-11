@@ -1,0 +1,20 @@
+{
+  "weekStart": "2026-05-04",
+  "rows": {
+    "24662": {
+      "mon": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "tue": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "wed": { "shiftCode": "K37", "locationKey": "NORMAL-K1.1TD" },
+      "thu": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "fri": { "offType": "sick" },
+      "sat": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.2TDSA" }
+    },
+    "24660": {
+      "mon": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2", "extraEvening": true, "eveningLocationKey": "EVENING-K1.2TDSA" },
+      "tue": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" },
+      "wed": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" },
+      "thu": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" },
+      "fri": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" }
+    }
+  }
+}
