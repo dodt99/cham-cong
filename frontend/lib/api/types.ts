@@ -103,3 +103,33 @@ export type ExportPreview = {
     rows: string[][];
   }[];
 };
+
+// ---- quản trị (chỉ ADMIN) ----------------------------------------------------------------------
+
+export type UserAccount = { id: number; username: string; fullName: string; role: Role; active: boolean };
+
+export type Option = { id: number; label: string };
+
+export type AdminReference = { positions: Option[]; sites: Option[]; blocks: Option[] };
+
+export type AdminEmployee = {
+  employeeId: number;
+  code: string;
+  fullName: string;
+  taxCode: string;
+  positionId: number;
+  membership: Member["membership"];
+  sortOrder: number;
+  activeFrom: string | null;
+  activeTo: string | null;
+};
+
+export type AdminShift = Shift & {
+  /** Có lên file Làm sớm không. */
+  earlyEligible: boolean;
+  /** Giờ kết thúc ghi trên file Làm sớm nếu khác giờ kết thúc ca. */
+  earlyEndTime: string | null;
+  sortOrder: number;
+};
+
+export type AdminLocation = WorkLocation & { sortOrder: number };

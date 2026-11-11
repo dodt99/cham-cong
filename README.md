@@ -25,6 +25,7 @@ docker compose up -d --build
 
 Mở `http://localhost` và đăng nhập bằng `APP_ADMIN_USERNAME` / `APP_ADMIN_PASSWORD`. Tài khoản này chỉ được tạo ở
 lần chạy đầu, khi hệ thống chưa có người dùng nào. Đặt `SITE_ADDRESS` thành tên miền để Caddy tự cấp HTTPS.
+Tài khoản khác, nhân viên, ca và địa điểm được thêm / sửa ở trang **Quản trị** (chỉ quyền admin).
 
 Dữ liệu nằm trong volume `db-data`; nên đặt lịch `pg_dump` hằng ngày.
 

@@ -1,4 +1,8 @@
 import type {
+  AdminEmployee,
+  AdminLocation,
+  AdminReference,
+  AdminShift,
   Assignment,
   BulkMode,
   Catalog,
@@ -7,6 +11,7 @@ import type {
   CurrentUser,
   ExportPreview,
   ExportType,
+  UserAccount,
   WeekView,
 } from "@/lib/api/types";
 
@@ -101,4 +106,27 @@ export const api = {
     request<ExportPreview>("GET", `/api/exports/${type}/preview?${query({ weekStart })}`),
   exportFileUrl: (type: ExportType, weekStart: string) =>
     `/api/exports/${type}/file?${query({ weekStart })}`,
+
+  admin: {
+    reference: () => request<AdminReference>("GET", "/api/admin/reference"),
+
+    users: () => request<UserAccount[]>("GET", "/api/users"),
+    createUser: (user: Omit<UserAccount, "id" | "active"> & { password: string }) =>
+      request<UserAccount>("POST", "/api/users", user),
+    /** `password` rỗng = giữ mật khẩu cũ. */
+    updateUser: (id: number, user: Pick<UserAccount, "fullName" | "role" | "active"> & { password: string | null }) =>
+      request<UserAccount>("PUT", `/api/users/${id}`, user),
+
+    employees: () => request<AdminEmployee[]>("GET", "/api/admin/employees"),
+    saveEmployee: (employee: Omit<AdminEmployee, "employeeId" | "sortOrder"> & { sortOrder: number | null }, id: number | null) =>
+      request<AdminEmployee>(id === null ? "POST" : "PUT", `/api/admin/employees${id === null ? "" : `/${id}`}`, employee),
+
+    shifts: () => request<AdminShift[]>("GET", "/api/admin/shifts"),
+    saveShift: (shift: Omit<AdminShift, "id">, id: number | null) =>
+      request<AdminShift>(id === null ? "POST" : "PUT", `/api/admin/shifts${id === null ? "" : `/${id}`}`, shift),
+
+    locations: () => request<AdminLocation[]>("GET", "/api/admin/locations"),
+    saveLocation: (location: Omit<AdminLocation, "id">, id: number | null) =>
+      request<AdminLocation>(id === null ? "POST" : "PUT", `/api/admin/locations${id === null ? "" : `/${id}`}`, location),
+  },
 };

@@ -236,8 +236,9 @@ POST   /api/assignments/bulk                   → "Áp cho cả tuần" (1 tran
 GET    /api/exports/{fast|early|evening|weekend}/preview?weekStart=…
 GET    /api/exports/{fast|early|evening|weekend}/file?weekStart=…
 
-GET|POST|PUT /api/catalog/{employees|members|shifts|locations|blocks|sites|off-types|positions}   (ghi: ADMIN)
-GET|POST|PUT /api/users                                                                            (ADMIN)
+GET    /api/catalog                            → danh mục cho màn hình xếp ca (không có MST)
+GET|POST|PUT /api/admin/{employees|shifts|locations} · GET /api/admin/reference      (ADMIN)
+GET|POST|PUT /api/users                                                              (ADMIN)
 GET    /api/reports/monthly?month=2026-05      (sau)
 ```
 
@@ -270,7 +271,7 @@ tìm kiếm, thẻ mobile, màu theo ngày. Phần dưới được thay toàn b
 | Tìm kiếm không khớp chữ `đ` | Sửa (`dao` khớp "Đào"); các ô chọn ca / địa điểm / nhân viên cũng tìm không dấu |
 | Ngày trống hiện chữ "Nghỉ" | Ngày thường chưa nhập hiện "Chưa xếp", phân biệt với "Nghỉ" đã chọn (file xuất vẫn coi cả hai là `Nghỉ`) |
 
-Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / Export) · `/catalog/*` · `/users`.
+Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / 4 tab Export) · `/admin` (chỉ ADMIN).
 
 Next.js chạy dạng server (không còn `output: "export"`) để dùng route động theo tuần. `AGENTS.md` yêu cầu đọc
 `node_modules/next/dist/docs/` trước khi viết code vì bản Next này có thay đổi so với tài liệu cũ — áp dụng khi triển khai.
@@ -291,6 +292,6 @@ biến môi trường. Cần kèm lịch `pg_dump` hằng ngày vì dữ liệu 
 | 3 | Module `export`: 4 file, xem trước dùng chung dòng với file | Xong — 20 phép so golden khớp từng ô |
 | 4 | `frontend/`: đăng nhập, 3 tab nhập liệu, 4 tab export, máy tính + điện thoại | Xong |
 | 6a | `docker-compose.yml`: Postgres + backend + frontend + Caddy | Xong |
-| 5 | Màn hình quản trị danh mục và người dùng (backend đã có API người dùng; danh mục mới có API đọc) | Chưa làm |
+| 5 | Trang `/admin`: nhân viên, ca, địa điểm, tài khoản — thêm và sửa, không xoá (nhân viên có ngày kết thúc; ca / địa điểm có cờ đang dùng) | Xong. Block, cơ sở, loại nghỉ, chức danh vẫn sửa bằng migration |
 | 6b | Backup, chuyển sang dùng thật, gỡ code v1 khỏi gốc repo | Chưa làm |
 | Sau | Báo cáo tháng | — |

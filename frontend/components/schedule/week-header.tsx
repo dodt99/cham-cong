@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Loader2, LogOut, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleAlert, CircleCheck, Loader2, LogOut, Settings, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api/client";
@@ -58,6 +59,14 @@ export function WeekHeader({ weekStart, user }: { weekStart: string; user: Curre
         <span className="text-sm text-muted-foreground">
           {user.fullName} · {ROLE_LABELS[user.role]}
         </span>
+        {user.role === "ADMIN" && (
+          <Button asChild variant="ghost" size="sm">
+            <Link href="/admin">
+              <Settings className="size-4" />
+              Quản trị
+            </Link>
+          </Button>
+        )}
         <Button type="button" variant="ghost" size="sm" onClick={logout}>
           <LogOut className="size-4" />
           Đăng xuất
