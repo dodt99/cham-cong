@@ -13,7 +13,7 @@
 | Người dùng | Chỉ quản lý đăng nhập bằng tài khoản + mật khẩu do admin tạo. Nhân viên HDV không dùng app |
 | Dữ liệu cũ | Không chuyển các tuần cũ từ Firestore. Chỉ seed danh mục, bắt đầu từ tuần đầu tiên dùng v2 |
 | Sửa đồng thời | Thường 1 người sửa. Lưu từng ô, phát hiện xung đột, không cần real-time |
-| Repo | Monorepo trong repo này: `backend/` + `frontend/`; v1 giữ ở tag `v1` |
+| Repo | Monorepo trong repo này: `backend/` + `frontend/`. Code v1 tạm giữ ở gốc repo để vẫn chạy và deploy được cho tới khi chuyển hẳn sang v2 |
 | Excel | **Giống v1 tuyệt đối**, kể cả các chỗ đã biết: tiêu đề Làm sớm khi tuần vắt tháng, cột Tên đơn vị (O) và STT để trống |
 | Template Excel | Xoá các sheet thừa chứa dữ liệu tuần cũ, chỉ giữ sheet được điền. Đây là khác biệt duy nhất so với file v1 |
 | Cột "Mặc định" | Bỏ khỏi dữ liệu. Thay bằng thao tác "Áp cho cả tuần" (T2→T6), có hỏi ghi đè hay chỉ điền ngày trống |
@@ -185,6 +185,9 @@ từng ô; hai file không trùng từng byte vì thư viện ghi khác nhau.
 Các điểm cố ý giữ theo v1: tiêu đề Làm sớm `NGÀY 27-01/5/2026` khi vắt tháng, cột O và STT để trống,
 file Tối xếp `Tầng 7` trước `Tầng B1` còn file T7-CN xếp ngược lại, quản lý chỉ có chức danh riêng trên file Làm sớm.
 
+Một chi tiết do phép so từng ô phát hiện: khi v1 đặt định dạng `hh:mm` cho một ô giờ, mọi ô trống dùng chung kiểu
+định dạng trong template cũng đổi từ `hh":"mm` sang `hh:mm` (hiển thị y hệt). `SheetWriter` lặp lại đúng hành vi này.
+
 ## 5. Backend (Spring Boot)
 
 Modular monolith, chia package theo nghiệp vụ; mỗi module chỉ lộ service + DTO, không lộ entity:
@@ -204,7 +207,7 @@ backend/src/main/resources/
 
 - Spring Data JPA + **Flyway**: schema và seed toàn bộ danh mục, gồm cả nhân viên kèm MST (lấy từ Phụ lục A của spec).
 - Test: JUnit + Testcontainers (Postgres thật), golden test cho export.
-- springdoc-openapi sinh mô tả API → frontend sinh kiểu TypeScript từ đó, không khai báo tay hai lần.
+- Kiểu TypeScript của API hiện khai báo tay ở `frontend/lib/api/types.ts`; sinh tự động từ OpenAPI để sau.
 - Phiên bản Java / Spring Boot: lấy bản LTS / ổn định mới nhất tại lúc khởi tạo dự án.
 
 ### 5.1 Đăng nhập và phân quyền
@@ -254,8 +257,8 @@ Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có 
 
 ## 6. Frontend (Next.js)
 
-Chuyển code v1 vào `frontend/` và giữ lại phần giao diện đã ổn: lưới nhập, combobox ca/địa điểm có tìm kiếm,
-thẻ mobile, màu theo ngày. Thay toàn bộ phần dưới:
+`frontend/` là một dự án Next.js mới, mang theo phần giao diện đã ổn của v1: lưới nhập, combobox ca/địa điểm có
+tìm kiếm, thẻ mobile, màu theo ngày. Phần dưới được thay toàn bộ:
 
 | V1 | V2 |
 |----|----|
@@ -264,7 +267,8 @@ thẻ mobile, màu theo ngày. Thay toàn bộ phần dưới:
 | Danh mục là hằng số TypeScript | Nạp từ API; màn hình quản trị danh mục cho admin |
 | ExcelJS + 4 bộ build/fill/preview/nút | 1 bảng preview + 1 nút tải dùng chung, dữ liệu từ `/api/exports` |
 | Không đăng nhập | Trang `/login`, chặn theo vai trò |
-| Tìm kiếm không khớp chữ `đ` | Sửa (`dao` khớp "Đào") |
+| Tìm kiếm không khớp chữ `đ` | Sửa (`dao` khớp "Đào"); các ô chọn ca / địa điểm / nhân viên cũng tìm không dấu |
+| Ngày trống hiện chữ "Nghỉ" | Ngày thường chưa nhập hiện "Chưa xếp", phân biệt với "Nghỉ" đã chọn (file xuất vẫn coi cả hai là `Nghỉ`) |
 
 Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / Export) · `/catalog/*` · `/users`.
 
@@ -279,13 +283,14 @@ biến môi trường. Cần kèm lịch `pg_dump` hằng ngày vì dữ liệu 
 
 ## 8. Lộ trình
 
-| Giai đoạn | Nội dung | Xong khi |
-|-----------|----------|----------|
-| 0 | Gắn tag `v1`; làm sạch template; sinh bộ file golden từ code v1 | Có file chuẩn cho mọi kịch bản mục 4 |
-| 1 | Khung `backend/`, Flyway schema + seed danh mục, đăng nhập | Đăng nhập được, API danh mục trả đúng seed |
-| 2 | Module `schedule`: ghi từng ô, hàng loạt, quy tắc nhập liệu | Test quy tắc mục 5 spec pass |
-| 3 | Module `export` | Golden test 4 file pass từng ô |
-| 4 | `frontend/`: đăng nhập, lưới 3 tab, preview + tải file | Nhập và xuất trọn 1 tuần trên máy tính và điện thoại |
-| 5 | Quản trị danh mục + người dùng | Thêm ca / nhân viên không cần sửa code |
-| 6 | Docker Compose, backup, chuyển sang dùng thật | v1 ngừng nhận dữ liệu mới |
+| Giai đoạn | Nội dung | Trạng thái |
+|-----------|----------|------------|
+| 0 | Làm sạch template; sinh bộ file golden từ code v1 (`npm run golden`) | Xong |
+| 1 | `backend/`: Flyway schema + seed danh mục, đăng nhập, phân quyền, API người dùng | Xong |
+| 2 | Module `schedule`: ghi từng ô có khoá lạc quan, áp cho cả tuần, quy tắc nhập liệu | Xong |
+| 3 | Module `export`: 4 file, xem trước dùng chung dòng với file | Xong — 20 phép so golden khớp từng ô |
+| 4 | `frontend/`: đăng nhập, 3 tab nhập liệu, 4 tab export, máy tính + điện thoại | Xong |
+| 6a | `docker-compose.yml`: Postgres + backend + frontend + Caddy | Xong |
+| 5 | Màn hình quản trị danh mục và người dùng (backend đã có API người dùng; danh mục mới có API đọc) | Chưa làm |
+| 6b | Backup, chuyển sang dùng thật, gỡ code v1 khỏi gốc repo | Chưa làm |
 | Sau | Báo cáo tháng | — |
