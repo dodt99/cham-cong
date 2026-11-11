@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: cham-cong
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/chamcong}
+    username: ${DB_USER:chamcong}
+    password: ${DB_PASSWORD:chamcong}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  session:
+    timeout: 12h
+    jdbc:
+      initialize-schema: never      # bảng do Flyway tạo (V1__schema.sql)
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+
+app:
+  team-code: HDV
+  # Tài khoản admin đầu tiên, chỉ được tạo khi chưa có người dùng nào.
+  bootstrap-admin:
+    username: ${APP_ADMIN_USERNAME:}
+    password: ${APP_ADMIN_PASSWORD:}
