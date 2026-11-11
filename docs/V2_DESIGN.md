@@ -15,9 +15,13 @@
 | Sửa đồng thời | Thường 1 người sửa. Lưu từng ô, phát hiện xung đột, không cần real-time |
 | Repo | Monorepo trong repo này: `backend/` + `frontend/`; v1 giữ ở tag `v1` |
 | Excel | **Giống v1 tuyệt đối**, kể cả các chỗ đã biết: tiêu đề Làm sớm khi tuần vắt tháng, cột Tên đơn vị (O) và STT để trống |
+| Template Excel | Xoá các sheet thừa chứa dữ liệu tuần cũ, chỉ giữ sheet được điền. Đây là khác biệt duy nhất so với file v1 |
 | Cột "Mặc định" | Bỏ khỏi dữ liệu. Thay bằng thao tác "Áp cho cả tuần" (T2→T6), có hỏi ghi đè hay chỉ điền ngày trống |
 | Nhóm K2 | Là người đội khác đến tăng cường: chỉ ghi nhận ca tối và T7-CN, giữ như v1 |
-| Mã ca tiền tố `2` | Là ca của cơ sở 2 (CS2) |
+| Mã ca tiền tố `2` | Là ca của cơ sở 2 (CS2), chỉ dùng ở CS2 |
+| Mã `2K44` | Bỏ. Đó là mã giả v1 đặt ra để phân biệt "2K43 nghỉ chiều"; v2 dùng đúng mã `2K43` (mục 3.4) |
+| Nhân viên vào / nghỉ giữa tuần | Người có thời gian hiệu lực giao với tuần thì xuất hiện trong tuần đó; ngày ngoài khoảng coi như trống |
+| MST nhân viên | Seed thẳng trong migration của repo |
 | Khoá tuần / lịch sử sửa | Không làm |
 | Mở rộng cần chừa chỗ | Báo cáo tháng |
 | Triển khai | Chưa quyết nơi đặt → đóng gói Docker Compose, chạy được ở đâu cũng được |
@@ -80,9 +84,9 @@ location    (id, team_id, site_id, block_id, code, name,
 
 shift       (id, team_id, site_id NULL, code, start_time, end_time,
              slot, half_day, on_weekday, on_weekend,
-             fast_code NULL, early_eligible, early_end_time NULL,
+             early_eligible, early_end_time NULL,
              sort_order, active,
-             UNIQUE (team_id, code))
+             UNIQUE (team_id, code, half_day))
 
 off_type    (id, team_id, code, label, fast_note NULL, is_default, sort_order)
 ```
@@ -112,12 +116,12 @@ Các bất biến của v1 (mục 4 spec) giờ do database giữ, không còn p
 | 3 bộ địa điểm NORMAL / EVENING / WEEKEND (NORMAL và WEEKEND giống hệt) | 1 bảng `location` + 3 cờ `on_weekday / on_evening / on_weekend`. `K1.P321` chỉ bật `on_evening` |
 | Thứ tự block suy ra từ thứ tự khai báo | `block.sort_order` (T7-CN) và `block.evening_sort_order` (file Tối) |
 | 4 nhóm ca theo nhãn chuỗi | `shift.slot` + `half_day` + `on_weekday` + `on_weekend`. `2K43` bật cả hai cờ ngày thay vì khai 2 lần |
-| `2K44 → 2K43` khi xuất Fast | `shift.fast_code = '2K43'` trên ca `2K44` |
+| Mã giả `2K44`, đổi lại thành `2K43` khi xuất Fast | Không còn `2K44`. Có 2 dòng ca cùng mã `2K43`: cả ngày và nghỉ chiều (mục 3.4) |
 | Bỏ `K18`, `K39` khỏi Làm sớm | `shift.early_eligible = false` |
 | Ca Nghỉ chiều tính kết thúc 16:30 trên file Làm sớm | `shift.early_end_time = 16:30` trên 6 ca nghỉ chiều |
 | Ghi chú `Nghỉ chiều` | `shift.half_day = true` |
 | Bỏ `NORMAL-CS2`, `WEEKEND-CS2` khỏi Làm sớm / T7-CN | `site.in_allowance_exports = false` cho site CS2 |
-| Mã ca tiền tố `2` | `shift.site_id = CS2` |
+| Mã ca tiền tố `2` | `shift.site_id = CS2`; cảnh báo khi đi với địa điểm ngoài CS2 |
 | Quản lý `23160` → `Chuyên viên` / `Quản lý HDV` | `employee.position_id = MANAGER` |
 | `EMPLOYEES` / `EMPLOYEES_K2` | `team_member.membership` = `CORE` / `SUPPORT` |
 | Comment-out nhân viên nghỉ việc | `team_member.active_to`; tuần cũ vẫn còn người đó |
@@ -129,9 +133,27 @@ Những thứ **gắn với khuôn file** (dòng bắt đầu, số cột, tên 
 chức danh/công việc cố định của file Tối và T7-CN) ở lại trong code, nằm cạnh template tương ứng — chúng đổi cùng lúc
 với template chứ không phải danh mục người dùng sửa.
 
+### 3.4 Ca `2K43` nghỉ chiều
+
+V1 chọn ca bằng mã, nên "2K43 làm buổi sáng" phải mang một mã khác (`2K44`) rồi đổi ngược lại thành `2K43` lúc xuất Fast.
+V2 định danh ca bằng `id`, mã ca chỉ là thuộc tính, nên danh mục có hai dòng cùng mã:
+
+| code | Giờ | half_day | Hiển thị khi chọn |
+|------|-----|----------|-------------------|
+| `2K43` | 6h30–16h30 | false | `2K43` 6h30–16h30 |
+| `2K43` | 6h30–12h00 | true | `2K43` 6h30–12h00 · Nghỉ chiều |
+
+Mã hiển thị, mã lưu và mã xuất Fast đều là `2K43`; không còn phép đổi mã nào trong code export.
+Ràng buộc duy nhất là `(team_id, code, half_day)`. Các ca nghỉ chiều còn lại (`K35`, `K36`, `K37`, `K39`, `2K36`) giữ mã riêng như v1.
+
+Hệ quả cần giữ đúng: file Fast gộp các ngày liên tiếp theo **ca (`id`)** chứ không theo mã, để "2K43 cả ngày" và
+"2K43 nghỉ chiều" vẫn tách thành 2 dòng như v1 (dòng sau có ghi chú `Nghỉ chiều`).
+
 ## 4. Xuất Excel
 
-Chạy **phía backend** bằng Apache POI, điền vào đúng 4 file template của v1 (copy nguyên từ `public/templates/*-empty.xlsx`).
+Chạy **phía backend** bằng Apache POI, điền vào 4 file template của v1 (`public/templates/*-empty.xlsx`) sau khi đã
+**xoá sheet thừa**: file Làm tối chỉ giữ `Sheet1` (bỏ 11 sheet dữ liệu tuần cũ), file T7-CN chỉ giữ `T7` và `CN` (bỏ `10.5`).
+Template nằm trong tài nguyên của backend, không còn là file tĩnh ai cũng tải được như ở v1.
 
 ```
 WeekScheduleReader      đọc 1 lần: roster + assignment 7 ngày + danh mục  →  WeekSchedule (bất biến)
@@ -152,8 +174,8 @@ WeekScheduleReader      đọc 1 lần: roster + assignment 7 ngày + danh mục
 
 ### Bảo đảm "giống v1 tuyệt đối"
 
-Trước khi viết backend, chạy **code v1** để sinh bộ file `.xlsx` chuẩn cho các kịch bản TC-1, TC-2, TC-3 của spec,
-cộng thêm: ca `K14`, tuần vắt tháng (2026-04-27), ca tối/ca T7 không có địa điểm. Các file này commit vào
+Trước khi viết backend, chạy **code v1 trên bộ template đã làm sạch** để sinh bộ file `.xlsx` chuẩn cho các kịch bản
+TC-1, TC-2, TC-3 của spec (chỗ v1 chọn `2K44` thì v2 chọn `2K43` nghỉ chiều), cộng thêm: ca `K14`, tuần vắt tháng (2026-04-27), ca tối/ca T7 không có địa điểm. Các file này commit vào
 `backend/src/test/resources/golden/`.
 
 Test của v2 nạp cùng kịch bản, xuất file, rồi so **từng ô trên mọi sheet** với file chuẩn: giá trị, kiểu dữ liệu
@@ -180,7 +202,7 @@ backend/src/main/resources/
   excel-templates/     4 file template
 ```
 
-- Spring Data JPA + **Flyway** (schema và seed danh mục không chứa dữ liệu cá nhân).
+- Spring Data JPA + **Flyway**: schema và seed toàn bộ danh mục, gồm cả nhân viên kèm MST (lấy từ Phụ lục A của spec).
 - Test: JUnit + Testcontainers (Postgres thật), golden test cho export.
 - springdoc-openapi sinh mô tả API → frontend sinh kiểu TypeScript từ đó, không khai báo tay hai lần.
 - Phiên bản Java / Spring Boot: lấy bản LTS / ổn định mới nhất tại lúc khởi tạo dự án.
@@ -228,7 +250,7 @@ Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có 
 - Ca tối: chọn nhân viên chưa có ca tối hôm đó + địa điểm `on_evening`; ca là ca `EVENING` duy nhất (`K15`).
 - **Áp cho cả tuần** (thay cột Mặc định): chọn ca/nghỉ + địa điểm cho T2→T6. Nếu có ngày đã nhập khác đi,
   hỏi *ghi đè tất cả* hay *chỉ điền ngày còn trống*. Không đụng T7/CN và ca tối.
-- Mới: cảnh báo (không chặn) khi ca thuộc CS2 đi với địa điểm không thuộc CS2 hoặc ngược lại; có ca nhưng thiếu địa điểm.
+- Mới: cảnh báo (không chặn) khi ca thuộc CS2 (`2Kxx`) đi với địa điểm ngoài CS2; có ca nhưng thiếu địa điểm.
 
 ## 6. Frontend (Next.js)
 
@@ -259,22 +281,11 @@ biến môi trường. Cần kèm lịch `pg_dump` hằng ngày vì dữ liệu 
 
 | Giai đoạn | Nội dung | Xong khi |
 |-----------|----------|----------|
-| 0 | Gắn tag `v1`; sinh bộ file golden từ code v1 | Có file chuẩn cho mọi kịch bản mục 4 |
+| 0 | Gắn tag `v1`; làm sạch template; sinh bộ file golden từ code v1 | Có file chuẩn cho mọi kịch bản mục 4 |
 | 1 | Khung `backend/`, Flyway schema + seed danh mục, đăng nhập | Đăng nhập được, API danh mục trả đúng seed |
 | 2 | Module `schedule`: ghi từng ô, hàng loạt, quy tắc nhập liệu | Test quy tắc mục 5 spec pass |
 | 3 | Module `export` | Golden test 4 file pass từng ô |
 | 4 | `frontend/`: đăng nhập, lưới 3 tab, preview + tải file | Nhập và xuất trọn 1 tuần trên máy tính và điện thoại |
-| 5 | Quản trị danh mục + người dùng, nhập nhân viên từ CSV | Thêm ca / nhân viên không cần sửa code |
+| 5 | Quản trị danh mục + người dùng | Thêm ca / nhân viên không cần sửa code |
 | 6 | Docker Compose, backup, chuyển sang dùng thật | v1 ngừng nhận dữ liệu mới |
 | Sau | Báo cáo tháng | — |
-
-## 9. Điểm còn cần xác nhận
-
-1. **Sheet thừa trong template.** `evening-attendance-empty.xlsx` kèm 11 sheet dữ liệu thật của các tuần cũ
-   (tên, MST, giờ Face ID); `weekend-attendance-empty.xlsx` kèm sheet `10.5`. V1 xuất cả những sheet này trong mọi file tải về.
-   Theo lựa chọn "giống tuyệt đối" thì mặc định giữ nguyên; khuyến nghị xoá, chỉ giữ sheet được điền.
-2. **Cảnh báo ca CS2 ↔ địa điểm CS2** (mục 5.3) là hành vi mới, suy ra từ việc ca tiền tố `2` là ca của CS2.
-3. **Nhân viên vào / nghỉ giữa tuần.** V1 không có khái niệm này. Đề xuất: người có `active_from`–`active_to` giao với
-   tuần thì xuất hiện trong tuần đó; ngày ngoài khoảng hiệu lực coi như trống.
-4. **Dữ liệu nhân viên (MST).** Không đưa vào migration trong git; admin nhập bằng CSV ở lần chạy đầu.
-   Lưu ý danh sách kèm MST hiện vẫn nằm trong code v1 và `BUSINESS_SPEC.md` của repo này.
