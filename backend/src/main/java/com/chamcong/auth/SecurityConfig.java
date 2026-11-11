@@ -32,7 +32,7 @@ class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/csrf").permitAll()
                         .requestMatchers("/api/auth/**").authenticated()
-                        .requestMatchers("/api/users/**").hasRole(Role.ADMIN.name())
+                        .requestMatchers("/api/users/**", "/api/admin/**").hasRole(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
                         .requestMatchers("/api/assignments/**").hasAnyRole(Role.ADMIN.name(), Role.EDITOR.name())
                         .anyRequest().hasRole(Role.ADMIN.name()))

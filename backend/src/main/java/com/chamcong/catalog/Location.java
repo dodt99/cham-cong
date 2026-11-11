@@ -43,7 +43,7 @@ public class Location {
 
     private boolean active;
 
-    protected Location() {
+    public Location() {
     }
 
     public Long getId() {
@@ -88,5 +88,45 @@ public class Location {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
+    }
+
+    public void setBlockId(Long blockId) {
+        this.blockId = blockId;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOnWeekday(boolean onWeekday) {
+        this.onWeekday = onWeekday;
+    }
+
+    public void setOnEvening(boolean onEvening) {
+        this.onEvening = onEvening;
+    }
+
+    public void setOnWeekend(boolean onWeekend) {
+        this.onWeekend = onWeekend;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

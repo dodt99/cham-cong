@@ -26,7 +26,7 @@ public class Employee {
     @Column(name = "position_id")
     private Long positionId;
 
-    protected Employee() {
+    public Employee() {
     }
 
     public Long getId() {
@@ -47,5 +47,21 @@ public class Employee {
 
     public Long getPositionId() {
         return positionId;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    public void setPositionId(Long positionId) {
+        this.positionId = positionId;
     }
 }

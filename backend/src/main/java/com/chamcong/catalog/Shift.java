@@ -57,7 +57,7 @@ public class Shift {
 
     private boolean active;
 
-    protected Shift() {
+    public Shift() {
     }
 
     public Long getId() {
@@ -114,5 +114,57 @@ public class Shift {
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setSiteId(Long siteId) {
+        this.siteId = siteId;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
+
+    public void setHalfDay(boolean halfDay) {
+        this.halfDay = halfDay;
+    }
+
+    public void setOnWeekday(boolean onWeekday) {
+        this.onWeekday = onWeekday;
+    }
+
+    public void setOnWeekend(boolean onWeekend) {
+        this.onWeekend = onWeekend;
+    }
+
+    public void setEarlyEligible(boolean earlyEligible) {
+        this.earlyEligible = earlyEligible;
+    }
+
+    public void setEarlyEndTime(LocalTime earlyEndTime) {
+        this.earlyEndTime = earlyEndTime;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

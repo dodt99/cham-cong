@@ -19,6 +19,7 @@ public final class CatalogRepositories {
     }
 
     public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+        boolean existsByCode(String code);
     }
 
     public interface TeamMemberRepository extends JpaRepository<TeamMember, Long> {

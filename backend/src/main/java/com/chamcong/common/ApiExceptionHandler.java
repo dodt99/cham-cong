@@ -1,5 +1,6 @@
 package com.chamcong.common;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +26,13 @@ public class ApiExceptionHandler {
     ResponseEntity<ErrorBody> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorBody("INVALID_CREDENTIALS", "Sai tên đăng nhập hoặc mật khẩu.", null));
+    }
+
+    /** Trùng khoá duy nhất hoặc vi phạm ràng buộc mà tầng nghiệp vụ chưa bắt trước. */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ResponseEntity<ErrorBody> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorBody("DATA_CONFLICT", "Dữ liệu trùng hoặc đang được dùng ở nơi khác.", null));
     }
 
     @ExceptionHandler({

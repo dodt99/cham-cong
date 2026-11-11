@@ -38,7 +38,7 @@ public class TeamMember {
     @Column(name = "active_to")
     private LocalDate activeTo;
 
-    protected TeamMember() {
+    public TeamMember() {
     }
 
     public Long getId() {
@@ -67,5 +67,29 @@ public class TeamMember {
 
     public LocalDate getActiveTo() {
         return activeTo;
+    }
+
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public void setMembership(Membership membership) {
+        this.membership = membership;
+    }
+
+    public void setSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public void setActiveFrom(LocalDate activeFrom) {
+        this.activeFrom = activeFrom;
+    }
+
+    public void setActiveTo(LocalDate activeTo) {
+        this.activeTo = activeTo;
     }
 }
