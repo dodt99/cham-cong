@@ -1,0 +1,13 @@
+{
+  "weekStart": "2026-12-28",
+  "rows": {
+    "25120": {
+      "mon": { "shiftCode": "K02", "locationKey": "NORMAL-K1.6TD" },
+      "tue": { "shiftCode": "K02", "locationKey": "NORMAL-K1.6TD" },
+      "wed": { "shiftCode": "K02", "locationKey": "NORMAL-K1.6TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.518523" },
+      "thu": { "shiftCode": "K02", "locationKey": "NORMAL-K1.6TD" },
+      "fri": { "offType": "leave" },
+      "sun": { "shiftCode": "K03", "locationKey": "WEEKEND-K1.614617" }
+    }
+  }
+}
