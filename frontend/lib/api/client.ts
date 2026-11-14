@@ -122,7 +122,7 @@ export const api = {
       request<AdminEmployee>(id === null ? "POST" : "PUT", `/api/admin/employees${id === null ? "" : `/${id}`}`, employee),
 
     shifts: () => request<AdminShift[]>("GET", "/api/admin/shifts"),
-    saveShift: (shift: Omit<AdminShift, "id">, id: number | null) =>
+    saveShift: (shift: Omit<AdminShift, "id" | "usageCount">, id: number | null) =>
       request<AdminShift>(id === null ? "POST" : "PUT", `/api/admin/shifts${id === null ? "" : `/${id}`}`, shift),
 
     locations: () => request<AdminLocation[]>("GET", "/api/admin/locations"),

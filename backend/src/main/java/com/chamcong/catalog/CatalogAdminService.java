@@ -29,6 +29,8 @@ import com.chamcong.common.ApiException;
 /**
  * Quản trị danh mục: nhân viên, ca, địa điểm. Không có xoá — nhân viên nghỉ thì đặt ngày kết thúc,
  * ca / địa điểm thôi dùng thì tắt {@code active}, để các tuần cũ vẫn xem và xuất lại được.
+ * Ca đã được xếp thì không đổi được loại (ca chính / ca tối); các thuộc tính khác vẫn sửa được
+ * và áp dụng cho cả những tuần đã xếp.
  */
 @Service
 public class CatalogAdminService {
@@ -41,10 +43,11 @@ public class CatalogAdminService {
     private final BlockRepository blocks;
     private final ShiftRepository shifts;
     private final LocationRepository locations;
+    private final ShiftUsage shiftUsage;
 
     CatalogAdminService(CurrentTeam currentTeam, EmployeeRepository employees, TeamMemberRepository members,
             JobPositionRepository positions, SiteRepository sites, BlockRepository blocks, ShiftRepository shifts,
-            LocationRepository locations) {
+            LocationRepository locations, ShiftUsage shiftUsage) {
         this.currentTeam = currentTeam;
         this.employees = employees;
         this.members = members;
@@ -53,6 +56,7 @@ public class CatalogAdminService {
         this.blocks = blocks;
         this.shifts = shifts;
         this.locations = locations;
+        this.shiftUsage = shiftUsage;
     }
 
     @Transactional(readOnly = true)
@@ -153,8 +157,11 @@ public class CatalogAdminService {
 
     @Transactional(readOnly = true)
     public List<ShiftDto> shifts() {
-        return shifts.findByTeamId(currentTeam.id()).stream()
-                .sorted(Comparator.comparingInt(Shift::getSortOrder)).map(CatalogAdminService::toDto).toList();
+        Long teamId = currentTeam.id();
+        Map<Long, Long> usage = shiftUsage.assignmentCountByShift(teamId);
+        return shifts.findByTeamId(teamId).stream()
+                .sorted(Comparator.comparingInt(Shift::getSortOrder))
+                .map(shift -> toDto(shift, usage.getOrDefault(shift.getId(), 0L))).toList();
     }
 
     @Transactional
@@ -162,15 +169,21 @@ public class CatalogAdminService {
         Shift shift = new Shift();
         shift.setTeamId(currentTeam.id());
         apply(shift, request);
-        return toDto(shifts.save(shift));
+        return toDto(shifts.save(shift), 0);
     }
 
     @Transactional
     public ShiftDto updateShift(Long id, ShiftRequest request) {
         Shift shift = shifts.findById(id).filter(s -> s.getTeamId().equals(currentTeam.id()))
                 .orElseThrow(() -> ApiException.notFound("SHIFT_NOT_FOUND", "Không tìm thấy ca."));
+        long usageCount = shiftUsage.assignmentCountByShift(shift.getTeamId()).getOrDefault(id, 0L);
+        // Phân công khe MAIN không được trỏ tới ca tối (và ngược lại), nên ca đã xếp phải giữ nguyên loại.
+        if (usageCount > 0 && shift.getSlot() != request.slot()) {
+            throw ApiException.conflict("SHIFT_IN_USE",
+                    "Ca này đã được xếp nên không đổi được loại ca. Hãy tạo ca mới và tắt “Đang dùng” ở ca cũ.", null);
+        }
         apply(shift, request);
-        return toDto(shift);
+        return toDto(shift, usageCount);
     }
 
     private void apply(Shift shift, ShiftRequest request) {
@@ -205,10 +218,10 @@ public class CatalogAdminService {
         shift.setActive(request.active());
     }
 
-    private static ShiftDto toDto(Shift s) {
+    private static ShiftDto toDto(Shift s, long usageCount) {
         return new ShiftDto(s.getId(), s.getCode(), s.getStartTime(), s.getEndTime(), s.getSlot(), s.isHalfDay(),
                 s.isOnWeekday(), s.isOnWeekend(), s.getSiteId(), s.isEarlyEligible(), s.getEarlyEndTime(),
-                s.getSortOrder(), s.isActive());
+                s.getSortOrder(), s.isActive(), usageCount);
     }
 
     // ---- địa điểm ------------------------------------------------------------------------------

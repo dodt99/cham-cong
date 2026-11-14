@@ -14,10 +14,26 @@ const SLOT_OPTIONS: { value: Slot; label: string }[] = [
   { value: "EVENING", label: "Ca tối tăng cường" },
 ];
 
-type Draft = Omit<AdminShift, "id" | "sortOrder"> & { id: number | null; sortOrder: string };
+type Draft = Omit<AdminShift, "id" | "sortOrder" | "usageCount"> & { id: number | null; sortOrder: string };
 
 /** "06:00:00" → "06:00" cho ô nhập giờ. */
 const clock = (time: string | null) => (time ? time.slice(0, 5) : "");
+
+const toDraft = (shift: AdminShift): Draft => ({
+  id: shift.id,
+  code: shift.code,
+  startTime: clock(shift.startTime),
+  endTime: clock(shift.endTime),
+  slot: shift.slot,
+  halfDay: shift.halfDay,
+  onWeekday: shift.onWeekday,
+  onWeekend: shift.onWeekend,
+  siteId: shift.siteId,
+  earlyEligible: shift.earlyEligible,
+  earlyEndTime: shift.earlyEndTime && clock(shift.earlyEndTime),
+  sortOrder: String(shift.sortOrder),
+  active: shift.active,
+});
 
 export function ShiftsSection({ reference }: { reference: AdminReference }) {
   const queryClient = useQueryClient();
@@ -26,6 +42,20 @@ export function ShiftsSection({ reference }: { reference: AdminReference }) {
   const set = (change: Partial<Draft>) => setDraft((current) => current && { ...current, ...change });
   const siteName = (siteId: number | null) =>
     siteId === null ? "—" : reference.sites.find((site) => site.id === siteId)?.label;
+
+  // Ca đã được xếp: sửa mã / giờ / cách tính làm sớm sẽ đổi luôn các tuần đã xếp, nên báo trước khi lưu.
+  const original = draft && shifts.data?.find((shift) => shift.id === draft.id);
+  const usageCount = original?.usageCount ?? 0;
+  const changesScheduledWeeks = Boolean(
+    draft && original && usageCount > 0 && (
+      draft.code.trim() !== original.code ||
+      draft.startTime !== clock(original.startTime) ||
+      draft.endTime !== clock(original.endTime) ||
+      draft.halfDay !== original.halfDay ||
+      draft.earlyEligible !== original.earlyEligible ||
+      (draft.earlyEndTime ?? "") !== clock(original.earlyEndTime)
+    ),
+  );
 
   async function save({ id, sortOrder, ...shift }: Draft) {
     await api.admin.saveShift({ ...shift, sortOrder: Number(sortOrder) }, id);
@@ -56,16 +86,14 @@ export function ShiftsSection({ reference }: { reference: AdminReference }) {
           { header: "Cơ sở", cell: (shift) => siteName(shift.siteId) },
           { header: "Tính làm sớm", cell: (shift) => yesNo(shift.earlyEligible), className: "text-center" },
           { header: "Đang dùng", cell: (shift) => yesNo(shift.active), className: "text-center" },
+          { header: "Đã xếp", cell: (shift) => (shift.usageCount > 0 ? `${shift.usageCount} lần` : "—"), className: "text-right" },
         ]}
         onAdd={() =>
           setDraft({ id: null, code: "", startTime: "06:00", endTime: "16:30", slot: "MAIN", halfDay: false,
             onWeekday: true, onWeekend: false, siteId: null, earlyEligible: true, earlyEndTime: null,
             sortOrder: "", active: true })
         }
-        onEdit={(shift) =>
-          setDraft({ ...shift, startTime: clock(shift.startTime), endTime: clock(shift.endTime),
-            earlyEndTime: shift.earlyEndTime && clock(shift.earlyEndTime), sortOrder: String(shift.sortOrder) })
-        }
+        onEdit={(shift) => setDraft(toDraft(shift))}
       />
       {draft && (
         <FormDialog title={draft.id === null ? "Thêm ca" : `Sửa ca ${draft.code}`} onSubmit={() => save(draft)}
@@ -76,7 +104,8 @@ export function ShiftsSection({ reference }: { reference: AdminReference }) {
           <TextField label="Giờ bắt đầu" type="time" value={draft.startTime}
             onChange={(startTime) => set({ startTime })} />
           <TextField label="Giờ kết thúc" type="time" value={draft.endTime} onChange={(endTime) => set({ endTime })} />
-          <SelectField label="Loại ca" value={draft.slot} options={SLOT_OPTIONS}
+          <SelectField label="Loại ca" value={draft.slot} options={SLOT_OPTIONS} disabled={usageCount > 0}
+            hint={usageCount > 0 ? "Ca đã được xếp nên không đổi được loại." : undefined}
             onChange={(slot) => slot && set({ slot, halfDay: slot === "EVENING" ? false : draft.halfDay })} />
           <SelectField label="Chỉ dùng ở cơ sở" value={draft.siteId} options={toOptions(reference.sites)}
             emptyLabel="Không giới hạn" onChange={(siteId) => set({ siteId })}
@@ -93,6 +122,13 @@ export function ShiftsSection({ reference }: { reference: AdminReference }) {
             value={draft.earlyEndTime ?? ""} onChange={(value) => set({ earlyEndTime: value || null })}
             hint="Để trống = dùng giờ kết thúc ca. Ca nghỉ chiều thường ghi 16:30." />
           <CheckField label="Đang dùng" checked={draft.active} onChange={(active) => set({ active })} />
+          {changesScheduledWeeks && (
+            <p role="status" className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 sm:col-span-2 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+              Ca này đã được xếp {usageCount} lần. Thay đổi về mã, giờ hoặc cách tính làm sớm sẽ áp dụng cho cả những
+              tuần đã xếp — file xuất lại của các tuần đó sẽ khác trước. Nếu chỉ muốn áp dụng từ nay, hãy tạo ca mới
+              và bỏ chọn “Đang dùng” ở ca này.
+            </p>
+          )}
         </FormDialog>
       )}
     </>

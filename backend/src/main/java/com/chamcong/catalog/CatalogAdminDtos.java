@@ -29,9 +29,10 @@ public final class CatalogAdminDtos {
             LocalDate activeTo) {
     }
 
+    /** {@code usageCount}: số phân công đang dùng ca này (mọi tuần). */
     public record ShiftDto(long id, String code, LocalTime startTime, LocalTime endTime, Slot slot, boolean halfDay,
             boolean onWeekday, boolean onWeekend, Long siteId, boolean earlyEligible, LocalTime earlyEndTime,
-            int sortOrder, boolean active) {
+            int sortOrder, boolean active, long usageCount) {
     }
 
     public record ShiftRequest(@NotBlank String code, @NotNull LocalTime startTime, @NotNull LocalTime endTime,
