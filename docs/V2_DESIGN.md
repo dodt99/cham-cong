@@ -223,6 +223,9 @@ cùng origin sau reverse proxy nên không cần JWT hay CORS.
 
 Tài khoản admin đầu tiên tạo từ biến môi trường khi khởi động lần đầu. Mật khẩu băm bằng BCrypt/Argon2.
 
+Mỗi request của người đã đăng nhập được đối chiếu lại với bảng `app_user` (`AccountStateFilter`): khoá tài khoản
+hoặc đổi quyền có hiệu lực ngay với các phiên đang mở, không chờ người đó đăng xuất hay phiên hết hạn.
+
 ### 5.2 API chính
 
 ```
@@ -243,7 +246,8 @@ GET    /api/reports/monthly?month=2026-05      (sau)
 ```
 
 **Lưu từng ô:** mỗi lần ghi gửi kèm `version` đang thấy. Nếu ô đã bị người khác đổi, server trả `409` kèm giá trị
-hiện tại; giao diện nạp lại ô đó và báo cho người dùng thay vì âm thầm đè lên.
+hiện tại; giao diện nạp lại ô đó và báo cho người dùng thay vì âm thầm đè lên. Lần ghi không thành vì bất kỳ lý do
+nào (mất mạng, bị từ chối) thì ô trở về giá trị server đang giữ — màn hình không hiện giá trị chưa được lưu.
 
 Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có đội thứ hai chỉ cần thêm cách chọn đội, không sửa tầng dưới.
 
@@ -252,9 +256,13 @@ Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có 
 - Ô ngày thường: ca `MAIN` có `on_weekday` (ca thường + nghỉ chiều) hoặc 1 trong các loại nghỉ.
   Ô T7/CN: ca có `on_weekend` hoặc "Nghỉ". Đổi ca giữ địa điểm; chọn nghỉ xoá địa điểm.
 - Ca tối: chọn nhân viên chưa có ca tối hôm đó + địa điểm `on_evening`; ca là ca `EVENING` duy nhất (`K15`).
+  Nếu danh mục có từ hai ca tối đang dùng thì tab Tối hiện thêm ô chọn ca.
 - **Áp cho cả tuần** (thay cột Mặc định): chọn ca/nghỉ + địa điểm cho T2→T6. Nếu có ngày đã nhập khác đi,
   hỏi *ghi đè tất cả* hay *chỉ điền ngày còn trống*. Không đụng T7/CN và ca tối.
 - Mới: cảnh báo (không chặn) khi ca thuộc CS2 (`2Kxx`) đi với địa điểm ngoài CS2; có ca nhưng thiếu địa điểm.
+- Sửa ca ở trang quản trị: ca đã được xếp thì không đổi được loại (ca chính ↔ ca tối), vì phân công khe `MAIN`
+  không được trỏ tới ca tối. Mã, giờ và cách tính làm sớm vẫn sửa được nhưng áp dụng cho cả các tuần đã xếp
+  (file xuất lại của tuần cũ sẽ khác) — biểu mẫu cảnh báo điều này và gợi ý tạo ca mới rồi tắt ca cũ.
 
 ## 6. Frontend (Next.js)
 
@@ -264,7 +272,7 @@ tìm kiếm, thẻ mobile, màu theo ngày. Phần dưới được thay toàn b
 | V1 | V2 |
 |----|----|
 | Zustand `persist` + Firestore, ghi đè cả kho | **TanStack Query**: đọc theo tuần, ghi từng ô có optimistic update và trạng thái lưu |
-| Tuần đang mở lưu chung trên server | Tuần nằm trên URL `/weeks/2026-05-04`; điều hướng tuần trước / sau / chọn ngày bất kỳ |
+| Tuần đang mở lưu chung trên server | Tuần nằm trên URL `/weeks/2026-05-04`; điều hướng tuần trước / sau / chọn từ danh sách tuần lân cận hoặc ngày bất kỳ |
 | Danh mục là hằng số TypeScript | Nạp từ API; màn hình quản trị danh mục cho admin |
 | ExcelJS + 4 bộ build/fill/preview/nút | 1 bảng preview + 1 nút tải dùng chung, dữ liệu từ `/api/exports` |
 | Không đăng nhập | Trang `/login`, chặn theo vai trò |
@@ -272,6 +280,10 @@ tìm kiếm, thẻ mobile, màu theo ngày. Phần dưới được thay toàn b
 | Ngày trống hiện chữ "Nghỉ" | Ngày thường chưa nhập hiện "Chưa xếp", phân biệt với "Nghỉ" đã chọn (file xuất vẫn coi cả hai là `Nghỉ`) |
 
 Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / 4 tab Export) · `/admin` (chỉ ADMIN).
+
+Trên máy tính trang xếp ca cao đúng bằng màn hình: đầu trang, các tab và tiêu đề cột của bảng đứng yên, chỉ thân
+bảng cuộn. Lỗi lưu và cảnh báo mất kết nối hiện ở thông báo nổi cuối màn hình nên luôn nhìn thấy dù đang cuộn tới
+đâu; khi lần tải lại dữ liệu bị lỗi, bảng đã tải vẫn được giữ nguyên.
 
 Next.js chạy dạng server (không còn `output: "export"`) để dùng route động theo tuần. `AGENTS.md` yêu cầu đọc
 `node_modules/next/dist/docs/` trước khi viết code vì bản Next này có thay đổi so với tài liệu cũ — áp dụng khi triển khai.
