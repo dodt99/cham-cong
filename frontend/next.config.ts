@@ -6,9 +6,6 @@ const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8080";
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  // frontend/ là một dự án độc lập nằm trong repo có lockfile khác ở gốc (v1).
-  outputFileTracingRoot: __dirname,
-  turbopack: { root: __dirname },
   async rewrites() {
     return [{ source: "/api/:path*", destination: `${backendUrl}/api/:path*` }];
   },
