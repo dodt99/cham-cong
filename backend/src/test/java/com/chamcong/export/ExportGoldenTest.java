@@ -37,7 +37,7 @@ import tools.jackson.databind.json.JsonMapper;
 /**
  * Bảo đảm "Excel giống v1": mỗi kịch bản trong {@code src/test/resources/golden/<tên>/input.json}
  * (viết theo mô hình dữ liệu v1) được nạp vào database v2, xuất ra 4 file và so từng ô với file
- * do chính code v1 sinh ra ({@code npm run golden} ở gốc repo).
+ * chuẩn nằm cạnh nó. File chuẩn do chính code v1 sinh ra và được giữ cố định.
  */
 @SpringBootTest
 @Import(PostgresTestConfig.class)

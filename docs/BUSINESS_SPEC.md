@@ -787,6 +787,8 @@ Thứ tự trong nhóm Ca T7-CN: K01, K03, K06, K10, K09, 2K43.
 
 ## Phụ lục B — Bản đồ code v1 (tham khảo khi cần đối chiếu)
 
+Các đường dẫn dưới đây thuộc nhánh `v1`; code v1 không còn trên nhánh `v2`.
+
 | Nội dung | File v1 |
 |----------|---------|
 | Kiểu dữ liệu | `lib/types/attendance.ts` |

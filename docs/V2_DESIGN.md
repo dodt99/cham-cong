@@ -13,7 +13,7 @@
 | Người dùng | Chỉ quản lý đăng nhập bằng tài khoản + mật khẩu do admin tạo. Nhân viên HDV không dùng app |
 | Dữ liệu cũ | Không chuyển các tuần cũ từ Firestore. Chỉ seed danh mục, bắt đầu từ tuần đầu tiên dùng v2 |
 | Sửa đồng thời | Thường 1 người sửa. Lưu từng ô, phát hiện xung đột, không cần real-time |
-| Repo | Monorepo trong repo này: `backend/` + `frontend/`. Code v1 tạm giữ ở gốc repo để vẫn chạy và deploy được cho tới khi chuyển hẳn sang v2 |
+| Repo | Monorepo trong repo này: `backend/` + `frontend/`. Code v1 đã gỡ khỏi nhánh này, còn giữ ở nhánh `v1` |
 | Excel | **Giống v1 tuyệt đối**, kể cả các chỗ đã biết: tiêu đề Làm sớm khi tuần vắt tháng, cột Tên đơn vị (O) và STT để trống |
 | Template Excel | Xoá các sheet thừa chứa dữ liệu tuần cũ, chỉ giữ sheet được điền. Đây là khác biệt duy nhất so với file v1 |
 | Cột "Mặc định" | Bỏ khỏi dữ liệu. Thay bằng thao tác "Áp cho cả tuần" (T2→T6), có hỏi ghi đè hay chỉ điền ngày trống |
@@ -151,7 +151,7 @@ Hệ quả cần giữ đúng: file Fast gộp các ngày liên tiếp theo **ca
 
 ## 4. Xuất Excel
 
-Chạy **phía backend** bằng Apache POI, điền vào 4 file template của v1 (`public/templates/*-empty.xlsx`) sau khi đã
+Chạy **phía backend** bằng Apache POI, điền vào 4 file template của v1 (nay ở `backend/src/main/resources/excel-templates/`) sau khi đã
 **xoá sheet thừa**: file Làm tối chỉ giữ `Sheet1` (bỏ 11 sheet dữ liệu tuần cũ), file T7-CN chỉ giữ `T7` và `CN` (bỏ `10.5`).
 Template nằm trong tài nguyên của backend, không còn là file tĩnh ai cũng tải được như ở v1.
 
@@ -176,7 +176,7 @@ WeekScheduleReader      đọc 1 lần: roster + assignment 7 ngày + danh mục
 
 Trước khi viết backend, chạy **code v1 trên bộ template đã làm sạch** để sinh bộ file `.xlsx` chuẩn cho các kịch bản
 TC-1, TC-2, TC-3 của spec (chỗ v1 chọn `2K44` thì v2 chọn `2K43` nghỉ chiều), cộng thêm: ca `K14`, tuần vắt tháng (2026-04-27), ca tối/ca T7 không có địa điểm. Các file này commit vào
-`backend/src/test/resources/golden/`.
+`backend/src/test/resources/golden/` và giữ cố định; công cụ sinh (`tools/golden`) đã được gỡ cùng code v1.
 
 Test của v2 nạp cùng kịch bản, xuất file, rồi so **từng ô trên mọi sheet** với file chuẩn: giá trị, kiểu dữ liệu
 (chuỗi / số / ngày), number format, màu nền. Build đỏ nếu lệch một ô. "Giống" ở đây là giống nội dung và định dạng
@@ -286,7 +286,7 @@ bảng cuộn. Lỗi lưu và cảnh báo mất kết nối hiện ở thông b�
 đâu; khi lần tải lại dữ liệu bị lỗi, bảng đã tải vẫn được giữ nguyên.
 
 Next.js chạy dạng server (không còn `output: "export"`) để dùng route động theo tuần. `AGENTS.md` yêu cầu đọc
-`node_modules/next/dist/docs/` trước khi viết code vì bản Next này có thay đổi so với tài liệu cũ — áp dụng khi triển khai.
+`frontend/node_modules/next/dist/docs/` trước khi viết code vì bản Next này có thay đổi so với tài liệu cũ — áp dụng khi triển khai.
 
 ## 7. Triển khai
 
@@ -298,12 +298,13 @@ biến môi trường. Cần kèm lịch `pg_dump` hằng ngày vì dữ liệu 
 
 | Giai đoạn | Nội dung | Trạng thái |
 |-----------|----------|------------|
-| 0 | Làm sạch template; sinh bộ file golden từ code v1 (`npm run golden`) | Xong |
+| 0 | Làm sạch template; sinh bộ file golden từ code v1 | Xong |
 | 1 | `backend/`: Flyway schema + seed danh mục, đăng nhập, phân quyền, API người dùng | Xong |
 | 2 | Module `schedule`: ghi từng ô có khoá lạc quan, áp cho cả tuần, quy tắc nhập liệu | Xong |
 | 3 | Module `export`: 4 file, xem trước dùng chung dòng với file | Xong — 20 phép so golden khớp từng ô |
 | 4 | `frontend/`: đăng nhập, 3 tab nhập liệu, 4 tab export, máy tính + điện thoại | Xong |
 | 6a | `docker-compose.yml`: Postgres + backend + frontend + Caddy | Xong |
 | 5 | Trang `/admin`: nhân viên, ca, địa điểm, tài khoản — thêm và sửa, không xoá (nhân viên có ngày kết thúc; ca / địa điểm có cờ đang dùng) | Xong. Block, cơ sở, loại nghỉ, chức danh vẫn sửa bằng migration |
-| 6b | Backup, chuyển sang dùng thật, gỡ code v1 khỏi gốc repo | Chưa làm |
+| 6b | Gỡ code v1 khỏi gốc repo (còn ở nhánh `v1`) | Xong |
+| 6c | Backup, chuyển sang dùng thật | Chưa làm |
 | Sau | Báo cáo tháng | — |
