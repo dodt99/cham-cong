@@ -1,0 +1,14 @@
+{
+  "weekStart": "2026-04-27",
+  "rows": {
+    "24662": {
+      "mon": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "tue": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "wed": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "thu": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "fri": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "sat": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.1TD" },
+      "sun": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.1TD" }
+    }
+  }
+}

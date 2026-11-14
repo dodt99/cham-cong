@@ -13,7 +13,7 @@
 | Người dùng | Chỉ quản lý đăng nhập bằng tài khoản + mật khẩu do admin tạo. Nhân viên HDV không dùng app |
 | Dữ liệu cũ | Không chuyển các tuần cũ từ Firestore. Chỉ seed danh mục, bắt đầu từ tuần đầu tiên dùng v2 |
 | Sửa đồng thời | Thường 1 người sửa. Lưu từng ô, phát hiện xung đột, không cần real-time |
-| Repo | Monorepo trong repo này: `backend/` + `frontend/`; v1 giữ ở tag `v1` |
+| Repo | Monorepo trong repo này: `backend/` + `frontend/`. Code v1 tạm giữ ở gốc repo để vẫn chạy và deploy được cho tới khi chuyển hẳn sang v2 |
 | Excel | **Giống v1 tuyệt đối**, kể cả các chỗ đã biết: tiêu đề Làm sớm khi tuần vắt tháng, cột Tên đơn vị (O) và STT để trống |
 | Template Excel | Xoá các sheet thừa chứa dữ liệu tuần cũ, chỉ giữ sheet được điền. Đây là khác biệt duy nhất so với file v1 |
 | Cột "Mặc định" | Bỏ khỏi dữ liệu. Thay bằng thao tác "Áp cho cả tuần" (T2→T6), có hỏi ghi đè hay chỉ điền ngày trống |
@@ -185,6 +185,9 @@ từng ô; hai file không trùng từng byte vì thư viện ghi khác nhau.
 Các điểm cố ý giữ theo v1: tiêu đề Làm sớm `NGÀY 27-01/5/2026` khi vắt tháng, cột O và STT để trống,
 file Tối xếp `Tầng 7` trước `Tầng B1` còn file T7-CN xếp ngược lại, quản lý chỉ có chức danh riêng trên file Làm sớm.
 
+Một chi tiết do phép so từng ô phát hiện: khi v1 đặt định dạng `hh:mm` cho một ô giờ, mọi ô trống dùng chung kiểu
+định dạng trong template cũng đổi từ `hh":"mm` sang `hh:mm` (hiển thị y hệt). `SheetWriter` lặp lại đúng hành vi này.
+
 ## 5. Backend (Spring Boot)
 
 Modular monolith, chia package theo nghiệp vụ; mỗi module chỉ lộ service + DTO, không lộ entity:
@@ -204,7 +207,7 @@ backend/src/main/resources/
 
 - Spring Data JPA + **Flyway**: schema và seed toàn bộ danh mục, gồm cả nhân viên kèm MST (lấy từ Phụ lục A của spec).
 - Test: JUnit + Testcontainers (Postgres thật), golden test cho export.
-- springdoc-openapi sinh mô tả API → frontend sinh kiểu TypeScript từ đó, không khai báo tay hai lần.
+- Kiểu TypeScript của API hiện khai báo tay ở `frontend/lib/api/types.ts`; sinh tự động từ OpenAPI để sau.
 - Phiên bản Java / Spring Boot: lấy bản LTS / ổn định mới nhất tại lúc khởi tạo dự án.
 
 ### 5.1 Đăng nhập và phân quyền
@@ -220,6 +223,9 @@ cùng origin sau reverse proxy nên không cần JWT hay CORS.
 
 Tài khoản admin đầu tiên tạo từ biến môi trường khi khởi động lần đầu. Mật khẩu băm bằng BCrypt/Argon2.
 
+Mỗi request của người đã đăng nhập được đối chiếu lại với bảng `app_user` (`AccountStateFilter`): khoá tài khoản
+hoặc đổi quyền có hiệu lực ngay với các phiên đang mở, không chờ người đó đăng xuất hay phiên hết hạn.
+
 ### 5.2 API chính
 
 ```
@@ -233,13 +239,15 @@ POST   /api/assignments/bulk                   → "Áp cho cả tuần" (1 tran
 GET    /api/exports/{fast|early|evening|weekend}/preview?weekStart=…
 GET    /api/exports/{fast|early|evening|weekend}/file?weekStart=…
 
-GET|POST|PUT /api/catalog/{employees|members|shifts|locations|blocks|sites|off-types|positions}   (ghi: ADMIN)
-GET|POST|PUT /api/users                                                                            (ADMIN)
+GET    /api/catalog                            → danh mục cho màn hình xếp ca (không có MST)
+GET|POST|PUT /api/admin/{employees|shifts|locations} · GET /api/admin/reference      (ADMIN)
+GET|POST|PUT /api/users                                                              (ADMIN)
 GET    /api/reports/monthly?month=2026-05      (sau)
 ```
 
 **Lưu từng ô:** mỗi lần ghi gửi kèm `version` đang thấy. Nếu ô đã bị người khác đổi, server trả `409` kèm giá trị
-hiện tại; giao diện nạp lại ô đó và báo cho người dùng thay vì âm thầm đè lên.
+hiện tại; giao diện nạp lại ô đó và báo cho người dùng thay vì âm thầm đè lên. Lần ghi không thành vì bất kỳ lý do
+nào (mất mạng, bị từ chối) thì ô trở về giá trị server đang giữ — màn hình không hiện giá trị chưa được lưu.
 
 Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có đội thứ hai chỉ cần thêm cách chọn đội, không sửa tầng dưới.
 
@@ -248,25 +256,34 @@ Service luôn nhận `teamId` (hiện lấy từ đội mặc định). Khi có 
 - Ô ngày thường: ca `MAIN` có `on_weekday` (ca thường + nghỉ chiều) hoặc 1 trong các loại nghỉ.
   Ô T7/CN: ca có `on_weekend` hoặc "Nghỉ". Đổi ca giữ địa điểm; chọn nghỉ xoá địa điểm.
 - Ca tối: chọn nhân viên chưa có ca tối hôm đó + địa điểm `on_evening`; ca là ca `EVENING` duy nhất (`K15`).
+  Nếu danh mục có từ hai ca tối đang dùng thì tab Tối hiện thêm ô chọn ca.
 - **Áp cho cả tuần** (thay cột Mặc định): chọn ca/nghỉ + địa điểm cho T2→T6. Nếu có ngày đã nhập khác đi,
   hỏi *ghi đè tất cả* hay *chỉ điền ngày còn trống*. Không đụng T7/CN và ca tối.
 - Mới: cảnh báo (không chặn) khi ca thuộc CS2 (`2Kxx`) đi với địa điểm ngoài CS2; có ca nhưng thiếu địa điểm.
+- Sửa ca ở trang quản trị: ca đã được xếp thì không đổi được loại (ca chính ↔ ca tối), vì phân công khe `MAIN`
+  không được trỏ tới ca tối. Mã, giờ và cách tính làm sớm vẫn sửa được nhưng áp dụng cho cả các tuần đã xếp
+  (file xuất lại của tuần cũ sẽ khác) — biểu mẫu cảnh báo điều này và gợi ý tạo ca mới rồi tắt ca cũ.
 
 ## 6. Frontend (Next.js)
 
-Chuyển code v1 vào `frontend/` và giữ lại phần giao diện đã ổn: lưới nhập, combobox ca/địa điểm có tìm kiếm,
-thẻ mobile, màu theo ngày. Thay toàn bộ phần dưới:
+`frontend/` là một dự án Next.js mới, mang theo phần giao diện đã ổn của v1: lưới nhập, combobox ca/địa điểm có
+tìm kiếm, thẻ mobile, màu theo ngày. Phần dưới được thay toàn bộ:
 
 | V1 | V2 |
 |----|----|
 | Zustand `persist` + Firestore, ghi đè cả kho | **TanStack Query**: đọc theo tuần, ghi từng ô có optimistic update và trạng thái lưu |
-| Tuần đang mở lưu chung trên server | Tuần nằm trên URL `/weeks/2026-05-04`; điều hướng tuần trước / sau / chọn ngày bất kỳ |
+| Tuần đang mở lưu chung trên server | Tuần nằm trên URL `/weeks/2026-05-04`; điều hướng tuần trước / sau / chọn từ danh sách tuần lân cận hoặc ngày bất kỳ |
 | Danh mục là hằng số TypeScript | Nạp từ API; màn hình quản trị danh mục cho admin |
 | ExcelJS + 4 bộ build/fill/preview/nút | 1 bảng preview + 1 nút tải dùng chung, dữ liệu từ `/api/exports` |
 | Không đăng nhập | Trang `/login`, chặn theo vai trò |
-| Tìm kiếm không khớp chữ `đ` | Sửa (`dao` khớp "Đào") |
+| Tìm kiếm không khớp chữ `đ` | Sửa (`dao` khớp "Đào"); các ô chọn ca / địa điểm / nhân viên cũng tìm không dấu |
+| Ngày trống hiện chữ "Nghỉ" | Ngày thường chưa nhập hiện "Chưa xếp", phân biệt với "Nghỉ" đã chọn (file xuất vẫn coi cả hai là `Nghỉ`) |
 
-Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / Export) · `/catalog/*` · `/users`.
+Trang: `/login` · `/weeks/[weekStart]` (tab Ngày thường / Tối / T7-CN / 4 tab Export) · `/admin` (chỉ ADMIN).
+
+Trên máy tính trang xếp ca cao đúng bằng màn hình: đầu trang, các tab và tiêu đề cột của bảng đứng yên, chỉ thân
+bảng cuộn. Lỗi lưu và cảnh báo mất kết nối hiện ở thông báo nổi cuối màn hình nên luôn nhìn thấy dù đang cuộn tới
+đâu; khi lần tải lại dữ liệu bị lỗi, bảng đã tải vẫn được giữ nguyên.
 
 Next.js chạy dạng server (không còn `output: "export"`) để dùng route động theo tuần. `AGENTS.md` yêu cầu đọc
 `node_modules/next/dist/docs/` trước khi viết code vì bản Next này có thay đổi so với tài liệu cũ — áp dụng khi triển khai.
@@ -279,13 +296,14 @@ biến môi trường. Cần kèm lịch `pg_dump` hằng ngày vì dữ liệu 
 
 ## 8. Lộ trình
 
-| Giai đoạn | Nội dung | Xong khi |
-|-----------|----------|----------|
-| 0 | Gắn tag `v1`; làm sạch template; sinh bộ file golden từ code v1 | Có file chuẩn cho mọi kịch bản mục 4 |
-| 1 | Khung `backend/`, Flyway schema + seed danh mục, đăng nhập | Đăng nhập được, API danh mục trả đúng seed |
-| 2 | Module `schedule`: ghi từng ô, hàng loạt, quy tắc nhập liệu | Test quy tắc mục 5 spec pass |
-| 3 | Module `export` | Golden test 4 file pass từng ô |
-| 4 | `frontend/`: đăng nhập, lưới 3 tab, preview + tải file | Nhập và xuất trọn 1 tuần trên máy tính và điện thoại |
-| 5 | Quản trị danh mục + người dùng | Thêm ca / nhân viên không cần sửa code |
-| 6 | Docker Compose, backup, chuyển sang dùng thật | v1 ngừng nhận dữ liệu mới |
+| Giai đoạn | Nội dung | Trạng thái |
+|-----------|----------|------------|
+| 0 | Làm sạch template; sinh bộ file golden từ code v1 (`npm run golden`) | Xong |
+| 1 | `backend/`: Flyway schema + seed danh mục, đăng nhập, phân quyền, API người dùng | Xong |
+| 2 | Module `schedule`: ghi từng ô có khoá lạc quan, áp cho cả tuần, quy tắc nhập liệu | Xong |
+| 3 | Module `export`: 4 file, xem trước dùng chung dòng với file | Xong — 20 phép so golden khớp từng ô |
+| 4 | `frontend/`: đăng nhập, 3 tab nhập liệu, 4 tab export, máy tính + điện thoại | Xong |
+| 6a | `docker-compose.yml`: Postgres + backend + frontend + Caddy | Xong |
+| 5 | Trang `/admin`: nhân viên, ca, địa điểm, tài khoản — thêm và sửa, không xoá (nhân viên có ngày kết thúc; ca / địa điểm có cờ đang dùng) | Xong. Block, cơ sở, loại nghỉ, chức danh vẫn sửa bằng migration |
+| 6b | Backup, chuyển sang dùng thật, gỡ code v1 khỏi gốc repo | Chưa làm |
 | Sau | Báo cáo tháng | — |

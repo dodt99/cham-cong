@@ -1,0 +1,78 @@
+{
+  "weekStart": "2026-05-04",
+  "rows": {
+    "24662": {
+      "mon": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true },
+      "tue": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "wed": { "shiftCode": "K07", "locationKey": "NORMAL-K1.3TD" },
+      "thu": { "shiftCode": "K07", "locationKey": "NORMAL-K1.3TD" },
+      "fri": { "shiftCode": "K07" },
+      "sat": { "shiftCode": "K06" },
+      "sun": { "offType": "sick" }
+    },
+    "25120": {
+      "mon": { "offType": "sick" },
+      "tue": { "offType": "sick" },
+      "wed": { "offType": "leave", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "thu": { "offType": "sick" },
+      "fri": { "offType": "sick" },
+      "sat": { "shiftCode": "K01", "locationKey": "WEEKEND-CS2" },
+      "sun": { "shiftCode": "K03", "locationKey": "WEEKEND-K1.BTD" }
+    },
+    "23380": {
+      "mon": { "shiftCode": "K18", "locationKey": "NORMAL-K1.2TDSA", "extraEvening": true, "eveningLocationKey": "EVENING-K1.707-712" },
+      "tue": { "shiftCode": "K39", "locationKey": "NORMAL-K1.2TDSA", "extraEvening": true, "eveningLocationKey": "EVENING-K1.707-712" },
+      "wed": { "shiftCode": "K14", "locationKey": "NORMAL-K1.2TDXQ", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "thu": { "shiftCode": "K35", "locationKey": "NORMAL-K1.4TD" },
+      "fri": { "shiftCode": "K02", "locationKey": "NORMAL-K1.HDV1", "extraEvening": true, "eveningLocationKey": "EVENING-K1.707-712" },
+      "sat": { "shiftCode": "K10", "locationKey": "WEEKEND-K1.707-712" },
+      "sun": { "shiftCode": "K09", "locationKey": "WEEKEND-K1.701-706" }
+    },
+    "24643": {
+      "mon": { "offType": "business_trip" },
+      "tue": { "offType": "business_trip" },
+      "wed": { "offType": "business_trip" },
+      "thu": { "offType": "business_trip" },
+      "fri": { "offType": "business_trip" }
+    },
+    "24676": {
+      "mon": { "shiftCode": "2K43", "locationKey": "NORMAL-CS2" },
+      "tue": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" },
+      "wed": { "shiftCode": "2K44", "locationKey": "NORMAL-CS2" },
+      "thu": { "shiftCode": "2K36", "locationKey": "NORMAL-CS2" },
+      "fri": { "shiftCode": "2K04", "locationKey": "NORMAL-CS2" },
+      "sat": { "shiftCode": "2K43", "locationKey": "WEEKEND-CS2" },
+      "sun": { "shiftCode": "2K43", "locationKey": "WEEKEND-K1.1TD" }
+    },
+    "24666": {
+      "mon": { "shiftCode": "2K44", "locationKey": "NORMAL-K1.5TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.BTD" },
+      "tue": { "shiftCode": "K37", "locationKey": "NORMAL-K1.5TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.518523" },
+      "wed": { "shiftCode": "K36" },
+      "thu": { "offType": "maternity_leave" },
+      "fri": { "shiftCode": "K04", "locationKey": "NORMAL-K1.518523" },
+      "sat": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.HDV2", "extraEvening": true, "eveningLocationKey": "EVENING-K1.P321" },
+      "sun": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.HDV1" }
+    },
+    "23160": {
+      "mon": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD", "extraEvening": true, "eveningLocationKey": "EVENING-K1.2TDSA" },
+      "tue": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "wed": { "shiftCode": "K37", "locationKey": "NORMAL-K1.1TD" },
+      "thu": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "fri": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" },
+      "sat": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.1TD" }
+    },
+    "19435": {
+      "mon": { "extraEvening": true, "eveningLocationKey": "EVENING-K1.P321" },
+      "tue": { "extraEvening": true, "eveningLocationKey": "EVENING-K1.P321" },
+      "sat": { "shiftCode": "K01", "locationKey": "WEEKEND-K1.BTD" },
+      "sun": { "shiftCode": "K01", "locationKey": "WEEKEND-K1.2TDSA" }
+    },
+    "19441": {
+      "mon": { "shiftCode": "K07", "locationKey": "NORMAL-K1.1TD" }
+    },
+    "24686": {
+      "mon": { "extraEvening": true, "eveningLocationKey": "EVENING-K1.2TDSA" },
+      "sat": { "shiftCode": "K06", "locationKey": "WEEKEND-K1.1TD" }
+    }
+  }
+}
