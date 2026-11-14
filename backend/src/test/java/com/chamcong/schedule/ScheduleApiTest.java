@@ -120,6 +120,44 @@ class ScheduleApiTest {
                 .andExpect(jsonPath("$.length()").value(3));
     }
 
+    @Test
+    void lockingOrDowngradingAnAccountAppliesToOpenSessions() throws Exception {
+        Cookie admin = login("admin");
+        Cookie editor = login("editor");
+        long editorId = users.findByUsername("editor").orElseThrow().getId();
+        String account = "{\"fullName\":\"EDITOR\",\"role\":\"%s\",\"active\":%s}";
+
+        putCell(editor, cell(coreEmployee, MONDAY, Slot.MAIN, shiftId("K07", false), null, null, null))
+                .andExpect(status().isOk());
+
+        // Hạ quyền: phiên đang mở mất quyền ghi ngay, vẫn xem được.
+        mvc.perform(put("/api/users/" + editorId).cookie(admin).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(account.formatted("VIEWER", true))).andExpect(status().isOk());
+        putCell(editor, cell(coreEmployee, MONDAY, Slot.MAIN, shiftId("K04", false), null, null, 0))
+                .andExpect(status().isForbidden());
+        mvc.perform(get("/api/schedule").cookie(editor).param("weekStart", MONDAY)).andExpect(status().isOk());
+
+        // Nâng quyền lại cũng có hiệu lực mà không cần đăng nhập lại.
+        mvc.perform(put("/api/users/" + editorId).cookie(admin).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(account.formatted("EDITOR", true))).andExpect(status().isOk());
+        putCell(editor, cell(coreEmployee, MONDAY, Slot.MAIN, shiftId("K04", false), null, null, 0))
+                .andExpect(status().isOk());
+
+        // Khoá tài khoản: phiên đang mở bị huỷ, không đọc, không ghi, không đăng nhập lại được.
+        mvc.perform(put("/api/users/" + editorId).cookie(admin).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(account.formatted("EDITOR", false))).andExpect(status().isOk());
+        mvc.perform(get("/api/schedule").cookie(editor).param("weekStart", MONDAY))
+                .andExpect(status().isUnauthorized());
+        putCell(editor, cell(coreEmployee, MONDAY, Slot.MAIN, shiftId("K07", false), null, null, 1))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/exports/fast/file").cookie(editor).param("weekStart", MONDAY))
+                .andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/auth/login").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"editor\",\"password\":\"%s\"}".formatted(PASSWORD)))
+                .andExpect(status().isUnauthorized());
+        assertThat(mainShiftOn(MONDAY)).isEqualTo(shiftId("K04", false));
+    }
+
     // ---- lưu từng ô ---------------------------------------------------------------------------
 
     @Test
