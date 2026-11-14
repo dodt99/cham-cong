@@ -33,6 +33,8 @@ export type CatalogView = {
   /** "Áp cho cả tuần": chỉ ca thường. */
   fullDayShiftGroups: ShiftGroup[];
   weekendShiftGroups: ShiftGroup[];
+  /** Ca tối đang dùng cho T2→T6. Thường chỉ có một (K15); có nhiều hơn thì tab Tối cho chọn. */
+  eveningShifts: Shift[];
   weekdayLocations: WorkLocation[];
   weekendLocations: WorkLocation[];
   eveningLocations: WorkLocation[];
@@ -51,6 +53,7 @@ export function buildCatalogView(catalog: Catalog): CatalogView {
     weekdayShiftGroups: [fullDay, halfDay],
     fullDayShiftGroups: [fullDay],
     weekendShiftGroups: [weekend],
+    eveningShifts: catalog.shifts.filter((shift) => shift.slot === "EVENING" && shift.active && shift.onWeekday),
     weekdayLocations: locations.filter((location) => location.onWeekday),
     weekendLocations: locations.filter((location) => location.onWeekend),
     eveningLocations: locations.filter((location) => location.onEvening),
