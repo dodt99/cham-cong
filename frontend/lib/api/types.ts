@@ -130,6 +130,8 @@ export type AdminShift = Shift & {
   /** Giờ kết thúc ghi trên file Làm sớm nếu khác giờ kết thúc ca. */
   earlyEndTime: string | null;
   sortOrder: number;
+  /** Số phân công đang dùng ca này (mọi tuần). */
+  usageCount: number;
 };
 
 export type AdminLocation = WorkLocation & { sortOrder: number };

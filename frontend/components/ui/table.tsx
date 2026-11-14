@@ -4,9 +4,12 @@ import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full max-w-full overflow-x-auto">
+  React.HTMLAttributes<HTMLTableElement> & {
+    /** Class cho khung cuộn bao quanh bảng (ví dụ giới hạn chiều cao để tiêu đề cột dính khi cuộn). */
+    containerClassName?: string;
+  }
+>(({ className, containerClassName, ...props }, ref) => (
+  <div className={cn("relative w-full max-w-full overflow-x-auto", containerClassName)}>
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}

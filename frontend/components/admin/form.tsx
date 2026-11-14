@@ -100,6 +100,7 @@ export function SelectField<T extends string | number>({
   options,
   onChange,
   emptyLabel,
+  disabled,
   ...field
 }: FieldProps & {
   value: T | null;
@@ -107,16 +108,18 @@ export function SelectField<T extends string | number>({
   onChange: (value: T | null) => void;
   /** Có giá trị này thì cho phép để trống. */
   emptyLabel?: string;
+  disabled?: boolean;
 }) {
   return (
     <Field {...field}>
       <select
         value={value === null ? "" : String(value)}
         required={emptyLabel === undefined}
+        disabled={disabled}
         onChange={(event) =>
           onChange(options.find((option) => String(option.value) === event.target.value)?.value ?? null)
         }
-        className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {(emptyLabel !== undefined || value === null) && <option value="">{emptyLabel ?? "— Chọn —"}</option>}
         {options.map((option) => (

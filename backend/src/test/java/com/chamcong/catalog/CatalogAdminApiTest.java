@@ -1,5 +1,6 @@
 package com.chamcong.catalog;
 
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -142,6 +143,33 @@ class CatalogAdminApiTest {
                 .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("SHIFT_NOT_ALLOWED"));
         mvc.perform(get("/api/exports/fast/preview").cookie(admin).param("weekStart", MONDAY))
                 .andExpect(jsonPath("$.sheets[0].rows[0][4]").value("K99"));
+    }
+
+    @Test
+    void shiftInUseKeepsItsKindButCanStillBeEdited() throws Exception {
+        String shift = """
+                {"code":"K97","startTime":"%s","endTime":"16:45","slot":"%s","halfDay":false,"onWeekday":true,
+                 "onWeekend":false,"siteId":null,"earlyEligible":false,"earlyEndTime":null,"sortOrder":46,"active":true}
+                """;
+        long shiftId = idOf(send(post("/api/admin/shifts"), shift.formatted("06:15", "MAIN"))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.usageCount").value(0)), "$.id");
+
+        // Chưa ai dùng thì đổi loại tuỳ ý.
+        send(put("/api/admin/shifts/" + shiftId), shift.formatted("06:15", "EVENING")).andExpect(status().isOk());
+        send(put("/api/admin/shifts/" + shiftId), shift.formatted("06:15", "MAIN")).andExpect(status().isOk());
+
+        long employeeId = idOf(mvc.perform(get("/api/admin/employees").cookie(admin)), "$[0].employeeId");
+        send(put("/api/assignments"), """
+                {"employeeId":%d,"date":"%s","slot":"MAIN","shiftId":%d,"version":null}
+                """.formatted(employeeId, MONDAY, shiftId)).andExpect(status().isOk());
+        mvc.perform(get("/api/admin/shifts").cookie(admin))
+                .andExpect(jsonPath("$[?(@.code=='K97')].usageCount").value(contains(1)));
+
+        // Đã xếp: không biến ca chính thành ca tối được, nhưng vẫn sửa được giờ.
+        send(put("/api/admin/shifts/" + shiftId), shift.formatted("06:15", "EVENING"))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("SHIFT_IN_USE"));
+        send(put("/api/admin/shifts/" + shiftId), shift.formatted("06:30", "MAIN")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.usageCount").value(1)).andExpect(jsonPath("$.startTime").value("06:30:00"));
     }
 
     @Test

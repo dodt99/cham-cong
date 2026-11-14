@@ -7,6 +7,7 @@ import { useScheduleEnvironment } from "@/components/schedule/schedule-context";
 import { ShiftSelect } from "@/components/schedule/shift-select";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ApiError } from "@/lib/api/client";
 import type { BulkMode, CellContent, Member } from "@/lib/api/types";
 import { WEEK_ACTION_TONE_CLASS } from "@/lib/schedule/day-colors";
 
@@ -40,15 +41,18 @@ function ApplyWeekForm({ member, filledDays, onApply, onClose }: ApplyWeekDialog
   const { view } = useScheduleEnvironment();
   const [content, setContent] = useState<CellContent>({ shiftId: null, offTypeId: null, locationId: null });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const hasChoice = content.shiftId !== null || content.offTypeId !== null;
 
   async function apply(mode: BulkMode) {
     setSubmitting(true);
+    setError(null);
     try {
       await onApply(member.employeeId, content, mode);
       onClose();
-    } catch {
-      // Lỗi đã hiện ở chỉ báo lưu trên đầu trang; giữ hộp thoại để thử lại.
+    } catch (e) {
+      // Giữ hộp thoại để thử lại.
+      setError(e instanceof ApiError ? e.message : "Không áp dụng được, vui lòng thử lại.");
       setSubmitting(false);
     }
   }
@@ -89,6 +93,7 @@ function ApplyWeekForm({ member, filledDays, onApply, onClose }: ApplyWeekDialog
           Tuần này đã có {filledDays} ngày được nhập. Chọn ghi đè tất cả hoặc chỉ điền những ngày còn trống.
         </p>
       )}
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       <DialogFooter className="gap-2">
         <Button type="button" variant="ghost" onClick={onClose} disabled={submitting}>
           Huỷ

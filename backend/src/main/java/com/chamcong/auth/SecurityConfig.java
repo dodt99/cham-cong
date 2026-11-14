@@ -8,12 +8,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 /**
@@ -24,11 +26,14 @@ import org.springframework.security.web.context.SecurityContextRepository;
 class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository contextRepository)
-            throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextRepository contextRepository,
+            UserDetailsService userDetailsService) throws Exception {
         http
                 .csrf(csrf -> csrf.spa())
                 .securityContext(context -> context.securityContextRepository(contextRepository))
+                // Khoá tài khoản / đổi quyền có hiệu lực ngay với phiên đang mở.
+                .addFilterAfter(new AccountStateFilter(userDetailsService, contextRepository),
+                        SecurityContextHolderFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/csrf").permitAll()
                         .requestMatchers("/api/auth/**").authenticated()
