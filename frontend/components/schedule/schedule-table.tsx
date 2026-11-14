@@ -25,6 +25,9 @@ type ScheduleTableProps = {
   onApplyWeek?: (employeeId: number, content: CellContent, mode: BulkMode) => Promise<void>;
 };
 
+/** Ô tiêu đề dính ở mép trên khung bảng; đường kẻ dưới vẽ bằng bóng vì viền của dòng không đi theo ô dính. */
+const STICKY_HEAD = "sticky top-0 z-20 whitespace-nowrap bg-background shadow-[inset_0_-1px_0_var(--color-border)]";
+
 const mainCell = (cells: CellMap, employeeId: number, date: string) =>
   cells.get(cellKey({ employeeId, date, slot: "MAIN" }));
 
@@ -43,8 +46,8 @@ export function ScheduleTable({ members, dates, cells, onApplyWeek }: ScheduleTa
   );
 
   return (
-    <>
-      <div className="relative mb-4 max-w-md">
+    <div className="flex min-w-0 flex-col md:h-full md:min-h-0">
+      <div className="relative mb-4 max-w-md shrink-0">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 opacity-50" />
         <input
           type="search"
@@ -69,30 +72,29 @@ export function ScheduleTable({ members, dates, cells, onApplyWeek }: ScheduleTa
             ))}
           </ul>
 
-          <div className="hidden min-w-0 max-w-full rounded-md border md:block">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="sticky left-0 z-20 min-w-[60px] bg-background">Mã NV</TableHead>
-                  <TableHead className="sticky left-[60px] z-20 min-w-[130px] bg-background shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]">
-                    Họ và tên
+          {/* Khung bảng tự cuộn cả hai chiều: tiêu đề cột dính ở trên, hai cột tên dính bên trái. */}
+          <Table containerClassName="hidden rounded-md border md:block md:min-h-0 md:flex-1 md:overflow-y-auto">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className={cn(STICKY_HEAD, "left-0 z-30 min-w-[60px]")}>Mã NV</TableHead>
+                <TableHead className={cn(STICKY_HEAD, "left-[60px] z-30 min-w-[130px] shadow-[inset_0_-1px_0_var(--color-border),2px_0_4px_-2px_rgba(0,0,0,0.1)]")}>
+                  Họ và tên
+                </TableHead>
+                {showWeekColumn && <TableHead className={cn(STICKY_HEAD, "w-[1%] text-center")}>Cả tuần</TableHead>}
+                {dates.map((date) => (
+                  <TableHead key={date} className={cn(STICKY_HEAD, "min-w-[180px] text-center")}>
+                    {formatDayHeader(date)}
                   </TableHead>
-                  {showWeekColumn && <TableHead className="w-[1%] text-center">Cả tuần</TableHead>}
-                  {dates.map((date) => (
-                    <TableHead key={date} className="min-w-[180px] text-center">
-                      {formatDayHeader(date)}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {visible.map((member) => (
-                  <MemberRow key={member.employeeId} member={member} dates={dates} cells={cells}
-                    onApplyWeek={showWeekColumn ? openApply : undefined} />
                 ))}
-              </TableBody>
-            </Table>
-          </div>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {visible.map((member) => (
+                <MemberRow key={member.employeeId} member={member} dates={dates} cells={cells}
+                  onApplyWeek={showWeekColumn ? openApply : undefined} />
+              ))}
+            </TableBody>
+          </Table>
         </>
       )}
 
@@ -104,7 +106,7 @@ export function ScheduleTable({ members, dates, cells, onApplyWeek }: ScheduleTa
           onClose={() => setApplyingTo(null)}
         />
       )}
-    </>
+    </div>
   );
 }
 
